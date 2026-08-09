@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Dashboard from './pages/Dashboard';
 
 function App() {
-  // Naka-set muna sa true para habang nagse-setup ka, agad mong makikita ang Dashboard UI
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const handleLogout = () => {

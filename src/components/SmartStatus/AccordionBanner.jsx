@@ -1,32 +1,79 @@
 import React, { useState } from 'react';
+import './AccordionBanner.css';
 
-const AccordionBanner = () => {
+const AccordionBanner = ({
+  status = 'current', // 'current' | 'idle'
+  courseTitle = 'Business Process Management',
+  instructor = 'Prof. Dela Cruz',
+  room = 'EFS 403',
+  modality = 'f2f', // 'f2f' | 'online'
+  meetLink,
+  progressPercent = 45,
+  nextClassTitle = 'Life and Works of Rizal',
+  nextClassMinutes = 45,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const isOnline = modality === 'online';
+
+  if (status === 'idle') {
+    return (
+      <div className="banner banner--idle">
+        <span className="banner__eyebrow mono-num">ON BREAK</span>
+        <p className="banner__idle-text">
+          You're on a break! Next class:{' '}
+          <strong>{nextClassTitle}</strong> in{' '}
+          <span className="mono-num">{nextClassMinutes} mins</span>.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div 
+    <div
+      className={`banner banner--${isOnline ? 'online' : 'f2f'}`}
       onClick={() => setIsExpanded(!isExpanded)}
-      style={{ 
-        padding: '15px', 
-        backgroundColor: '#e3f2fd', 
-        borderRadius: '8px', 
-        marginBottom: '20px',
-        cursor: 'pointer'
-      }}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isExpanded}
+      onKeyDown={(e) => e.key === 'Enter' && setIsExpanded(!isExpanded)}
     >
-      <h3 style={{ margin: 0 }}>CURRENT: Business Process Management</h3>
-      
+      <div className="banner__top">
+        <span className="banner__eyebrow mono-num">
+          NOW BOARDING {isOnline ? '💻' : '🎒'}
+        </span>
+        <span className="banner__chevron">{isExpanded ? '▲' : '▼'}</span>
+      </div>
+
+      <h3 className="banner__title">{courseTitle}</h3>
+
       {isExpanded && (
-        <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #90caf9' }}>
-          <p><strong>Instructor:</strong> Prof. Dela Cruz</p>
-          <p><strong>Room:</strong> EFS 403 🏫</p>
-          <button style={{ marginTop: '10px', padding: '6px 12px' }}>Open Google Meet</button>
+        <div className="banner__details">
+          <div className="banner__detail-row">
+            <span className="banner__detail-label mono-num">INSTRUCTOR</span>
+            <span className="banner__detail-value">{instructor}</span>
+          </div>
+          <div className="banner__detail-row">
+            <span className="banner__detail-label mono-num">
+              {isOnline ? 'MODALITY' : 'ROOM'}
+            </span>
+            <span className="banner__detail-value mono-num banner__gate">
+              {isOnline ? 'Online / Async' : room}
+            </span>
+          </div>
+          <button
+            className="banner__action"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {isOnline ? 'Join Google Meet' : 'View Room on Map'}
+          </button>
         </div>
       )}
-      
-      {/* Elapsed Time Progress Bar Placeholder */}
-      <div style={{ width: '100%', height: '4px', backgroundColor: '#bbdefb', marginTop: '15px', borderRadius: '2px' }}>
-        <div style={{ width: '45%', height: '100%', backgroundColor: '#1976d2', borderRadius: '2px' }}></div>
+
+      <div className="banner__progress" aria-hidden="true">
+        <div
+          className="banner__progress-fill"
+          style={{ width: `${progressPercent}%` }}
+        />
       </div>
     </div>
   );

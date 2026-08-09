@@ -1,0 +1,73 @@
+.section-form {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: var(--gap);
+}
+
+.section-form__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.section-form__label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--amber);
+}
+
+.section-form__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.section-form__row {
+  display: flex;
+  gap: 10px;
+}
+
+.section-form__input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  transition: border-color 0.15s ease;
+}
+
+.section-form__input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.section-form__input--error {
+  border-color: var(--danger);
+}
+
+.section-form__submit {
+  padding: 0 20px;
+  background: var(--amber);
+  color: #10131a;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: filter 0.15s ease;
+}
+
+.section-form__submit:hover {
+  filter: brightness(1.08);
+}
+
+.section-form__error {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--danger);
+}

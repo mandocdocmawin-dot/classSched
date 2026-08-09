@@ -1,0 +1,23 @@
+.schedule-list {
+  margin-top: 24px;
+}
+
+.schedule-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.schedule-list__title {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.schedule-list__count {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}

@@ -1,0 +1,150 @@
+.banner {
+  border-radius: var(--radius);
+  padding: 16px 18px 14px;
+  margin-bottom: var(--gap);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--panel-raised);
+  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.banner--f2f {
+  border-color: var(--amber-dim);
+  box-shadow: inset 3px 0 0 var(--amber);
+}
+
+.banner--online {
+  border-color: var(--teal-dim);
+  box-shadow: inset 3px 0 0 var(--teal);
+}
+
+.banner__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.banner__eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.banner--f2f .banner__eyebrow {
+  color: var(--amber);
+}
+
+.banner--online .banner__eyebrow {
+  color: var(--teal);
+}
+
+.banner__chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.banner__title {
+  margin: 8px 0 0;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+.banner__details {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.banner__detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.banner__detail-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.banner__detail-value {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.banner__gate {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.banner--f2f .banner__gate {
+  color: var(--amber);
+}
+
+.banner--online .banner__gate {
+  color: var(--teal);
+}
+
+.banner__action {
+  margin-top: 4px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--amber);
+  color: #10131a;
+}
+
+.banner--online .banner__action {
+  background: var(--teal);
+}
+
+.banner__progress {
+  margin-top: 14px;
+  height: 4px;
+  width: 100%;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.banner__progress-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.banner--online .banner__progress-fill {
+  background: var(--teal);
+}
+
+/* Idle / on-break state */
+.banner--idle {
+  cursor: default;
+  background: var(--panel);
+  border-style: dashed;
+}
+
+.banner--idle .banner__eyebrow {
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.banner__idle-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.banner__idle-text strong {
+  color: var(--amber);
+}

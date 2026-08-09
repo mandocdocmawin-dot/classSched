@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Color */
+  --bg: #10131a;
+  --panel: #171b24;
+  --panel-raised: #1f2430;
+  --border: #2a3040;
+  --amber: #ffb000;
+  --amber-dim: #7a5a12;
+  --teal: #4fd1c5;
+  --teal-dim: #1f4d48;
+  --text: #edeff4;
+  --text-muted: #7a8194;
+  --danger: #ff6b6b;
+  --danger-dim: #4a2323;
+
+  /* Type */
+  --font-display: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Layout */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --gap: 16px;
+  --max-width: 480px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image: radial-gradient(circle at 50% 0%, #1a1f2b 0%, var(--bg) 60%);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+input {
+  font-family: inherit;
+}
+
+.mono-num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
