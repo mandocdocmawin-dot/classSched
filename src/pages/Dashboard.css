@@ -155,6 +155,6 @@
 }
 
 .dashboard__logout:hover {
-  border-color: var(--danger);
-  color: var(--danger);
+  border-color: var(--info-blue);
+  color: var(--info-blue);
 }

@@ -84,27 +84,35 @@
   appearance: none;
 }
 
-.section-modal__preview {
+.section-modal__code-field {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.section-modal__code-input {
   padding: 12px 14px;
   background: var(--panel-raised);
   border: 1px dashed var(--amber-dim);
   border-radius: var(--radius-sm);
-  margin-bottom: 18px;
-}
-
-.section-modal__preview-label {
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-}
-
-.section-modal__preview-code {
+  color: var(--amber);
   font-size: 16px;
   font-weight: 600;
-  color: var(--amber);
+  letter-spacing: 0.06em;
+  transition: border-color 0.15s ease, border-style 0.15s ease;
+}
+
+.section-modal__code-input:focus {
+  outline: none;
+  border-style: solid;
+  border-color: var(--amber);
+}
+
+.section-modal__code-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+  opacity: 0.6;
 }
 
 .section-modal__error {

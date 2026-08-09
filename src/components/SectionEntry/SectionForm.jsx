@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SectionForm.css';
 
 const PROGRAMS = ['BSIS', 'BSIT', 'BSCS', 'BSED'];
@@ -7,15 +7,28 @@ const YEARS = ['1', '2', '3', '4'];
 const SectionForm = ({ isOpen, onClose, onSubmitSection, error, initialProgram, initialYear }) => {
   const [program, setProgram] = useState(initialProgram || PROGRAMS[0]);
   const [year, setYear] = useState(initialYear || YEARS[0]);
+  const [sectionCode, setSectionCode] = useState(`${initialProgram || PROGRAMS[0]}${initialYear || YEARS[0]}`);
+  const [codeEditedManually, setCodeEditedManually] = useState(false);
+
+  // Auto-fill the code from Program + Year, unless the user has typed
+  // their own value directly into the field.
+  useEffect(() => {
+    if (!codeEditedManually) {
+      setSectionCode(`${program}${year}`);
+    }
+  }, [program, year, codeEditedManually]);
 
   if (!isOpen) return null;
 
-  const previewCode = `${program}${year}`;
+  const handleCodeChange = (e) => {
+    setCodeEditedManually(true);
+    setSectionCode(e.target.value.toUpperCase());
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Ipasa ang section code pataas sa Dashboard
-    onSubmitSection(previewCode);
+    onSubmitSection(sectionCode);
   };
 
   return (
@@ -35,7 +48,10 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error, initialProgram, 
               <select
                 className="section-modal__select"
                 value={program}
-                onChange={(e) => setProgram(e.target.value)}
+                onChange={(e) => {
+                  setProgram(e.target.value);
+                  setCodeEditedManually(false);
+                }}
               >
                 {PROGRAMS.map((p) => (
                   <option key={p} value={p}>
@@ -50,7 +66,10 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error, initialProgram, 
               <select
                 className="section-modal__select"
                 value={year}
-                onChange={(e) => setYear(e.target.value)}
+                onChange={(e) => {
+                  setYear(e.target.value);
+                  setCodeEditedManually(false);
+                }}
               >
                 {YEARS.map((y) => (
                   <option key={y} value={y}>
@@ -61,10 +80,17 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error, initialProgram, 
             </label>
           </div>
 
-          <div className="section-modal__preview">
-            <span className="section-modal__preview-label mono-num">LOADING</span>
-            <span className="section-modal__preview-code mono-num">{previewCode}</span>
-          </div>
+          <label className="section-modal__code-field">
+            <span className="section-modal__field-label mono-num">SECTION CODE</span>
+            <input
+              type="text"
+              className="section-modal__code-input mono-num"
+              value={sectionCode}
+              onChange={handleCodeChange}
+              placeholder="e.g. BSIS2"
+              autoCapitalize="characters"
+            />
+          </label>
 
           {error && <p className="section-modal__error">{error}</p>}
 
