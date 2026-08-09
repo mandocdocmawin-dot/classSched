@@ -1,48 +1,47 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './InfoCard.css';
 
-const InfoCard = ({ title, time, location, instructor, modality = 'f2f' }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const STATUS_STYLES = {
+  ongoing: 'info-card__status--ongoing',
+  upcoming: 'info-card__status--upcoming',
+  done: 'info-card__status--done',
+};
+
+const InfoCard = ({
+  title,
+  time,
+  day,
+  location,
+  instructor,
+  modality = 'f2f',
+  status = 'upcoming',
+}) => {
   const isOnline = modality === 'online';
 
   return (
-    <div
-      className={`info-card info-card--${isOnline ? 'online' : 'f2f'}`}
-      onClick={() => setIsExpanded(!isExpanded)}
-      role="button"
-      tabIndex={0}
-      aria-expanded={isExpanded}
-      onKeyDown={(e) => e.key === 'Enter' && setIsExpanded(!isExpanded)}
-    >
-      <div className="info-card__main">
-        <h4 className="info-card__title">{title}</h4>
-        <p className="info-card__time mono-num">{time}</p>
+    <div className={`info-card info-card--${isOnline ? 'online' : 'f2f'}`}>
+      <div className="info-card__badge">
+        <span className="info-card__badge-top mono-num">WEEKLY</span>
+        <span className="info-card__badge-day mono-num">{day}</span>
       </div>
 
-      <div className="info-card__stub">
-        <span className="info-card__stub-icon" aria-hidden="true">
-          {isOnline ? '💻' : '🏫'}
-        </span>
-      </div>
-
-      {isExpanded && (
-        <div className="info-card__details">
-          <div className="info-card__detail-row">
-            <span className="info-card__detail-label mono-num">
-              {isOnline ? 'MODALITY' : 'ROOM'}
-            </span>
-            <span className="info-card__detail-value">
-              {location || (isOnline ? 'Online' : '—')}
-            </span>
-          </div>
-          {instructor && (
-            <div className="info-card__detail-row">
-              <span className="info-card__detail-label mono-num">FACULTY</span>
-              <span className="info-card__detail-value">{instructor}</span>
-            </div>
-          )}
+      <div className="info-card__body">
+        <div className="info-card__top-row">
+          <h4 className="info-card__title">{title}</h4>
+          <span className={`info-card__status ${STATUS_STYLES[status]} mono-num`}>
+            {status}
+          </span>
         </div>
-      )}
+
+        <p className="info-card__time mono-num">
+          <span aria-hidden="true">🕐</span> {time}
+        </p>
+
+        <div className="info-card__subtext">
+          {instructor ? `${instructor} · ` : ''}
+          {location || (isOnline ? 'Online' : '—')}
+        </div>
+      </div>
     </div>
   );
 };

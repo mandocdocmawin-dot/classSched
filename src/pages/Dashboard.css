@@ -3,6 +3,35 @@
   max-width: var(--max-width);
   margin: 0 auto;
   min-height: 100vh;
+  transition: max-width 0.2s ease;
+}
+
+/* Tablet: give the mobile layout a little more breathing room */
+@media (min-width: 640px) {
+  .dashboard {
+    max-width: 560px;
+    padding-top: 32px;
+  }
+}
+
+/* Desktop: stop stacking everything in a phone-width column */
+@media (min-width: 900px) {
+  .dashboard {
+    max-width: 1040px;
+    padding: 40px 32px 60px;
+  }
+
+  .dashboard__header {
+    align-items: center;
+  }
+
+  .dashboard__title {
+    font-size: 26px;
+  }
+
+  .dashboard__subtitle {
+    max-width: none;
+  }
 }
 
 .dashboard__header {
@@ -41,6 +70,43 @@
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    'banner'
+    'list'
+    'week';
+  gap: 0;
+}
+
+.dashboard__slot-banner {
+  grid-area: banner;
+}
+
+.dashboard__slot-list {
+  grid-area: list;
+}
+
+.dashboard__slot-week {
+  grid-area: week;
+}
+
+@media (min-width: 900px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr 340px;
+    grid-template-areas:
+      'list banner'
+      'list week';
+    align-items: start;
+    column-gap: 28px;
+  }
+
+  .dashboard__slot-list {
+    margin-top: 0;
+  }
 }
 
 .dashboard__empty {

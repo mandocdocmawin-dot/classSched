@@ -38,11 +38,17 @@ const Dashboard = ({ onLogout }) => {
       />
 
       {activeSection ? (
-        <>
-          <AccordionBanner />
-          <ScheduleList />
-          <WeekGlance />
-        </>
+        <div className="dashboard__grid">
+          <div className="dashboard__slot-banner">
+            <AccordionBanner />
+          </div>
+          <div className="dashboard__slot-list">
+            <ScheduleList />
+          </div>
+          <div className="dashboard__slot-week">
+            <WeekGlance />
+          </div>
+        </div>
       ) : (
         <div className="dashboard__empty">
           <span className="dashboard__empty-icon" aria-hidden="true">
