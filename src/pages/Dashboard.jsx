@@ -2,38 +2,46 @@ import React, { useState } from 'react';
 import SectionForm from '../components/SectionEntry/SectionForm';
 import AccordionBanner from '../components/SmartStatus/AccordionBanner';
 import ScheduleList from '../components/Timeline/ScheduleList';
+import WeekGlance from '../components/Timeline/WeekGlance';
 import './Dashboard.css';
 
 const Dashboard = ({ onLogout }) => {
   const [activeSection, setActiveSection] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSectionSubmit = (code) => {
     console.log('Loading data for:', code);
     setActiveSection(code);
+    setIsModalOpen(false);
   };
 
   return (
     <div className="dashboard">
       <header className="dashboard__header">
         <div>
-          <span className="dashboard__eyebrow mono-num">MY SCHEDULE</span>
-          {activeSection && (
-            <h2 className="dashboard__section mono-num">{activeSection}</h2>
-          )}
+          <h1 className="dashboard__title">Weekly Schedule</h1>
+          <p className="dashboard__subtitle">
+            {activeSection
+              ? `Showing recurring sessions for ${activeSection}.`
+              : 'Set your program & year to load your sessions.'}
+          </p>
         </div>
-        <button className="dashboard__logout" onClick={onLogout}>
-          Sign out
+        <button className="dashboard__add-btn" onClick={() => setIsModalOpen(true)}>
+          <span aria-hidden="true">+</span> {activeSection ? 'Add New' : 'Set Section'}
         </button>
       </header>
 
-      {/* Section Code Entry Component */}
-      <SectionForm onSubmitSection={handleSectionSubmit} />
+      <SectionForm
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmitSection={handleSectionSubmit}
+      />
 
-      {/* Kung may section na, ipakita ang schedule components */}
       {activeSection ? (
         <>
           <AccordionBanner />
           <ScheduleList />
+          <WeekGlance />
         </>
       ) : (
         <div className="dashboard__empty">
@@ -41,10 +49,18 @@ const Dashboard = ({ onLogout }) => {
             🎫
           </span>
           <p className="dashboard__empty-text">
-            Enter your section code above to pull up today's boarding schedule.
+            No section set yet. Tap "Set Section" to pick your program and
+            year and pull up your weekly schedule.
           </p>
+          <button className="dashboard__empty-cta" onClick={() => setIsModalOpen(true)}>
+            + Set Section
+          </button>
         </div>
       )}
+
+      <button className="dashboard__logout" onClick={onLogout}>
+        Sign out
+      </button>
     </div>
   );
 };

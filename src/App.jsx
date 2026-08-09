@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import './App.css';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
 
   const handleLogin = () => {
+    // TODO: dito ipapasok ang resulta ng aktwal na Google OAuth flow (googleAuth.js)
     setIsLoggedIn(true);
   };
 
@@ -17,16 +20,7 @@ function App() {
       {isLoggedIn ? (
         <Dashboard user={{ name: 'BSIS Student' }} onLogout={handleLogout} />
       ) : (
-        <div style={{ textAlign: 'center', marginTop: '80px', padding: '20px' }}>
-          <h2>Smart Class Scheduling System</h2>
-          <p>Please sign in with your Google .edu account to continue.</p>
-          <button 
-            onClick={handleLogin} 
-            style={{ padding: '10px 20px', fontSize: '16px', borderRadius: '6px', cursor: 'pointer', marginTop: '10px' }}
-          >
-            Sign in with Google
-          </button>
-        </div>
+        <Login onLoginSuccess={handleLogin} />
       )}
     </div>
   );

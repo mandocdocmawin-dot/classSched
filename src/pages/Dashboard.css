@@ -9,38 +9,38 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
 
-.dashboard__eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
-  display: block;
+.dashboard__title {
+  margin: 0 0 4px;
+  font-size: 21px;
+  color: var(--text);
+  letter-spacing: 0.01em;
 }
 
-.dashboard__section {
-  margin: 4px 0 0;
-  font-size: 22px;
-  color: var(--amber);
-  letter-spacing: 0.04em;
-}
-
-.dashboard__logout {
-  padding: 7px 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
+.dashboard__subtitle {
+  margin: 0;
   font-size: 12px;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  color: var(--text-muted);
+  max-width: 26ch;
 }
 
-.dashboard__logout:hover {
-  border-color: var(--danger);
-  color: var(--danger);
+.dashboard__add-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--amber);
+  color: #10131a;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .dashboard__empty {
@@ -50,6 +50,9 @@
   text-align: center;
   padding: 48px 20px;
   color: var(--text-muted);
+  background: var(--panel);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
 }
 
 .dashboard__empty-icon {
@@ -59,8 +62,33 @@
 }
 
 .dashboard__empty-text {
-  margin: 0;
-  font-size: 14px;
+  margin: 0 0 18px;
+  font-size: 13px;
   max-width: 30ch;
   line-height: 1.6;
+}
+
+.dashboard__empty-cta {
+  padding: 11px 20px;
+  background: var(--amber);
+  color: #10131a;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.dashboard__logout {
+  display: block;
+  margin: 28px auto 0;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.dashboard__logout:hover {
+  border-color: var(--danger);
+  color: var(--danger);
 }

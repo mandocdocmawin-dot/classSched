@@ -1,0 +1,59 @@
+.week-glance {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.week-glance__title {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.week-glance__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.week-glance__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.week-glance__day-label {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.week-glance__circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  background: var(--panel-raised);
+}
+
+.week-glance__circle--active {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #10131a;
+}
+
+.week-glance__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--amber-dim);
+}
