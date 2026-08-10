@@ -27,7 +27,7 @@ function App() {
   return (
     <div className="App">
       {accessToken ? (
-        <Dashboard user={{ name: 'BSIS Student' }} onLogout={handleLogout} />
+        <Dashboard accessToken={accessToken} onLogout={handleLogout} />
       ) : (
         <Login onLoginSuccess={signIn} />
       )}

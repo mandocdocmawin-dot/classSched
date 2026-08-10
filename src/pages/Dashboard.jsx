@@ -1,19 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SectionForm from '../components/SectionEntry/SectionForm';
 import AccordionBanner from '../components/SmartStatus/AccordionBanner';
 import ScheduleList from '../components/Timeline/ScheduleList';
 import WeekGlance from '../components/Timeline/WeekGlance';
+import { getScheduleForSection } from '../services/sheetsAPI';
 import './Dashboard.css';
 
-const Dashboard = ({ onLogout }) => {
+// Kinukuha yung program prefix (letters) mula sa section code.
+// Halimbawa: "BSIS2" -> "BSIS", "ACT1" -> "ACT"
+function getTabNameFromSection(sectionCode) {
+  const match = sectionCode.match(/^[A-Za-z]+/);
+  return match ? match[0].toUpperCase() : sectionCode;
+}
+
+const Dashboard = ({ accessToken, onLogout }) => {
   const [activeSection, setActiveSection] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [classes, setClasses] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState(null);
 
   const handleSectionSubmit = (code) => {
     console.log('Loading data for:', code);
     setActiveSection(code);
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    if (!activeSection || !accessToken) return;
+
+    const tabName = getTabNameFromSection(activeSection);
+
+    setIsLoading(true);
+    setLoadError(null);
+
+    getScheduleForSection(accessToken, tabName, activeSection)
+      .then((data) => {
+        setClasses(data);
+        if (data.length === 0) {
+          setLoadError(
+            `Walang nahanap na klase para sa "${activeSection}". I-check kung tama ang section code.`
+          );
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load schedule:', err);
+        setLoadError('Hindi ma-load ang schedule. Subukan ulit.');
+      })
+      .finally(() => setIsLoading(false));
+  }, [activeSection, accessToken]);
 
   return (
     <div className="dashboard">
@@ -38,17 +73,33 @@ const Dashboard = ({ onLogout }) => {
       />
 
       {activeSection ? (
-        <div className="dashboard__grid">
-          <div className="dashboard__slot-banner">
-            <AccordionBanner />
+        isLoading ? (
+          <div className="dashboard__empty">
+            <p className="dashboard__empty-text">Loading your schedule...</p>
           </div>
-          <div className="dashboard__slot-list">
-            <ScheduleList />
+        ) : loadError ? (
+          <div className="dashboard__empty">
+            <span className="dashboard__empty-icon" aria-hidden="true">
+              ⚠️
+            </span>
+            <p className="dashboard__empty-text">{loadError}</p>
+            <button className="dashboard__empty-cta" onClick={() => setIsModalOpen(true)}>
+              Try Another Section
+            </button>
           </div>
-          <div className="dashboard__slot-week">
-            <WeekGlance />
+        ) : (
+          <div className="dashboard__grid">
+            <div className="dashboard__slot-banner">
+              <AccordionBanner classes={classes} />
+            </div>
+            <div className="dashboard__slot-list">
+              <ScheduleList classes={classes} />
+            </div>
+            <div className="dashboard__slot-week">
+              <WeekGlance classes={classes} />
+            </div>
           </div>
-        </div>
+        )
       ) : (
         <div className="dashboard__empty">
           <span className="dashboard__empty-icon" aria-hidden="true">

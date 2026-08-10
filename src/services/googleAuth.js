@@ -2,7 +2,6 @@
 let tokenClient = null;
 
 export function initGoogleAuth(onTokenReceived) {
-  // wait if the Google script hasn't loaded yet
   if (!window.google || !window.google.accounts) {
     setTimeout(() => initGoogleAuth(onTokenReceived), 200);
     return;
@@ -30,7 +29,6 @@ export function signIn() {
   tokenClient.requestAccessToken();
 }
 
-// silent refresh — call before token expiry
 export function refreshToken() {
   if (!tokenClient) return;
   tokenClient.requestAccessToken({ prompt: "" });
@@ -38,7 +36,7 @@ export function refreshToken() {
 
 export async function verifyEduAndFetchSheet(accessToken) {
   const res = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${import.meta.env.VITE_SPREADSHEET_ID}/values/Sheet1`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${import.meta.env.VITE_SPREADSHEET_ID}/values/BSIS!A1:A1`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
   );
 

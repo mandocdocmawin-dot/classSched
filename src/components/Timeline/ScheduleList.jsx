@@ -1,26 +1,30 @@
 import React, { useState, useMemo } from 'react';
 import InfoCard from './InfoCard';
+import { getShortDay, formatTimeRange, getClassStatus, getCurrentDayCode } from '../../utils/scheduleHelpers';
 import './ScheduleList.css';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-// Placeholder data - mamaya kukunin natin ito sa Google Sheets!
-const ALL_CLASSES = [
-  { id: 1, day: 'MON', title: 'Human Computer Interaction', time: '08:00 – 09:30', instructor: 'Mr. Gian Carlo Gallon', location: 'Com Lab B', modality: 'f2f', status: 'upcoming' },
-  { id: 2, day: 'WED', title: 'Human Computer Interaction', time: '08:00 – 09:30', instructor: 'Mr. Gian Carlo Gallon', location: 'Com Lab B', modality: 'f2f', status: 'ongoing' },
-  { id: 3, day: 'WED', title: 'Dedicated Time for Program Meetings', time: '10:00 – 11:00', instructor: '', location: 'Student Lounge', modality: 'f2f', status: 'upcoming' },
-  { id: 4, day: 'WED', title: 'Team Sports', time: '13:00 – 14:30', instructor: 'Ms. Kethleen Onato', location: 'EFS 403', modality: 'f2f', status: 'upcoming' },
-  { id: 5, day: 'WED', title: 'Student Activity Program', time: '15:00 – 16:00', instructor: '', location: 'Covered Court', modality: 'f2f', status: 'upcoming' },
-  { id: 6, day: 'THU', title: 'Web Development', time: '13:00 – 15:00', instructor: 'Prof. Reyes', location: 'Google Meet', modality: 'online', status: 'upcoming' },
-  { id: 7, day: 'FRI', title: 'Life and Works of Rizal', time: '10:00 – 11:30', instructor: 'Prof. Santos', location: 'Room 101', modality: 'f2f', status: 'upcoming' },
-];
-
-const ScheduleList = () => {
-  const [filterDay, setFilterDay] = useState('WED');
+const ScheduleList = ({ classes = [] }) => {
+  const [filterDay, setFilterDay] = useState(getCurrentDayCode());
 
   const filteredClasses = useMemo(
-    () => ALL_CLASSES.filter((cls) => cls.day === filterDay),
-    [filterDay]
+    () =>
+      classes
+        .filter((cls) => getShortDay(cls.day) === filterDay)
+        .map((cls, index) => ({
+          id: `${cls.section}-${cls.day}-${cls.startTime}-${index}`,
+          day: getShortDay(cls.day),
+          title: cls.course,
+          time: formatTimeRange(cls.startTime, cls.endTime),
+          instructor: cls.instructor,
+          location: cls.modality === 'Online/Async' ? 'Google Meet' : cls.room,
+          modality: cls.modality === 'Online/Async' ? 'online' : 'f2f',
+          status: getClassStatus(cls.startTime, cls.endTime, cls.day),
+          _sortKey: cls.startTime,
+        }))
+        .sort((a, b) => a._sortKey.localeCompare(b._sortKey)),
+    [classes, filterDay]
   );
 
   return (
@@ -29,7 +33,7 @@ const ScheduleList = () => {
         <div className="schedule-list__title-row">
           <h3 className="schedule-list__title">Your Classes</h3>
           <span className="schedule-list__count mono-num">
-            {ALL_CLASSES.length} Total
+            {classes.length} Total
           </span>
         </div>
         <label className="schedule-list__filter">

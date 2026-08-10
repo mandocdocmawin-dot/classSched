@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCurrentDayCode, getDaysWithClasses } from '../../utils/scheduleHelpers';
 import './WeekGlance.css';
 
 const DAYS = [
@@ -11,7 +12,10 @@ const DAYS = [
   { code: 'SUN', label: 'S' },
 ];
 
-const WeekGlance = ({ activeDay = 'WED', daysWithClasses = ['MON', 'WED', 'THU', 'FRI'] }) => {
+const WeekGlance = ({ classes = [] }) => {
+  const activeDay = getCurrentDayCode();
+  const daysWithClasses = getDaysWithClasses(classes);
+
   return (
     <div className="week-glance">
       <span className="week-glance__title mono-num">WEEK AT A GLANCE</span>

@@ -6,6 +6,7 @@
   border-radius: var(--radius-sm);
   padding: 12px;
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .info-card__badge {
@@ -90,19 +91,62 @@
   opacity: 0.6;
 }
 
+.info-card__time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0;
+}
+
 .info-card__time {
-  margin: 4px 0 8px;
+  margin: 0;
   font-size: 12px;
   color: var(--text-muted);
 }
 
-.info-card__subtext {
-  font-size: 12px;
+.info-card__chevron {
+  font-size: 9px;
   color: var(--text-muted);
-  background: var(--panel-raised);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.info-card__details {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-card__detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-card__detail-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.info-card__detail-value {
+  font-size: 13px;
+  color: var(--text);
+  text-align: right;
+}
+
+.info-card__gate {
+  font-weight: 600;
+}
+
+.info-card--f2f .info-card__gate {
+  color: var(--amber);
+}
+
+.info-card--online .info-card__gate {
+  color: var(--teal);
 }
