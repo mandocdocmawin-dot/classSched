@@ -4,6 +4,7 @@
   border-radius: var(--radius);
   padding: 16px;
   margin-top: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .week-glance__title {
@@ -32,8 +33,8 @@
 }
 
 .week-glance__circle {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -48,12 +49,14 @@
 .week-glance__circle--active {
   background: var(--amber);
   border-color: var(--amber);
-  color: #10131a;
+  color: var(--amber-on);
+  font-weight: 700;
 }
 
 .week-glance__dot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--amber-dim);
+  background: var(--amber);
 }
+

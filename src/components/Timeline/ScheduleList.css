@@ -4,6 +4,7 @@
   border-radius: var(--radius);
   padding: 16px;
   margin-top: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-list__header {
@@ -22,13 +23,15 @@
 .schedule-list__title {
   margin: 0;
   font-size: 16px;
+  font-weight: 600;
   color: var(--text);
 }
 
 .schedule-list__count {
   font-size: 10px;
+  font-weight: 600;
   color: var(--amber);
-  background: rgba(255, 176, 0, 0.1);
+  background: var(--amber-glow);
   border: 1px solid var(--amber-dim);
   border-radius: 20px;
   padding: 3px 9px;
@@ -38,19 +41,27 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 .schedule-list__filter-select {
   flex: 1;
-  padding: 8px 10px;
-  background: var(--bg);
+  min-height: 44px;
+  padding: 8px 12px;
+  background: var(--panel-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
   font-size: 13px;
+  font-family: var(--font-body);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.schedule-list__filter-select:hover {
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
 }
 
 .schedule-list__empty {
@@ -59,3 +70,4 @@
   font-size: 13px;
   padding: 24px 0;
 }
+

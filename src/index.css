@@ -1,21 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Color */
-  --bg: #10131a;
-  --panel: #171b24;
-  --panel-raised: #1f2430;
-  --border: #2a3040;
-  --amber: #ffb000;
-  --amber-dim: #7a5a12;
-  --teal: #4fd1c5;
-  --teal-dim: #1f4d48;
-  --text: #edeff4;
-  --text-muted: #7a8194;
-  --danger: #ff6b6b;
-  --danger-dim: #4a2323;
-  --info-blue: #6ea8fe;
-  --info-blue-dim: #24334f;
+  /* Surface Hierarchy (Deep Charcoal/Graphite Navy Tinted Dark Mode) */
+  --bg: #0c0e14;              /* Base app background */
+  --panel: #141824;           /* Standard card / container surface */
+  --panel-raised: #1d2232;    /* Elevated cards / inner containers / inputs */
+  --panel-hover: #262c3e;     /* Hover surface elevation */
+
+  /* Borders & Elevation Shadows */
+  --border: #282f42;          /* Structural 1px panel border */
+  --border-hover: #3d4763;    /* Border on surface hover */
+  --border-active: #ffb000;   /* Focus / selected border accent */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45);
+
+  /* Primary Accent System (Amber) */
+  --amber: #ffb000;           /* Core terminal amber - primary CTAs & active states */
+  --amber-hover: #ffc233;     /* Hover state for primary amber elements */
+  --amber-dim: #7a5500;       /* Low-contrast amber border / background tint */
+  --amber-glow: rgba(255, 176, 0, 0.12); /* Ambient highlight overlay */
+  --amber-on: #0a0c10;        /* High-contrast text on solid amber elements (14:1) */
+
+  /* Refined Secondary & Semantic Palette */
+  --teal: #2dd4bf;            /* Online / virtual class indicator (soft teal) */
+  --teal-dim: #134e4a;        /* Teal border / tint */
+  --teal-glow: rgba(45, 212, 191, 0.12);
+
+  --holiday-accent: #a78bfa;  /* Holiday / special events (soft lavender - distinct from error red) */
+  --holiday-dim: #4c3a75;
+  --holiday-glow: rgba(167, 139, 250, 0.12);
+
+  --danger: #f87171;          /* Error / alert state (crimson rose) */
+  --danger-dim: #5c2323;
+  --danger-glow: rgba(248, 113, 113, 0.12);
+
+  --info-blue: #60a5fa;       /* Secondary info link / subtle interactive highlight */
+  --info-blue-dim: #1e3a8a;
+
+  /* Typography & Contrast Hierarchy */
+  --text: #f1f5f9;            /* Primary text (15:1 contrast against --panel) */
+  --text-muted: #94a3b8;      /* Secondary meta text (6.6:1 contrast - exceeds WCAG AA 4.5:1) */
+  --text-dim: #64748b;        /* Subtle hints & disabled labels (3.2:1 contrast) */
 
   /* Type */
   --font-display: 'IBM Plex Mono', 'Courier New', monospace;
@@ -43,7 +68,7 @@ body {
 }
 
 body {
-  background-image: radial-gradient(circle at 50% 0%, #1a1f2b 0%, var(--bg) 60%);
+  background-image: radial-gradient(circle at 50% 0%, #161c2b 0%, var(--bg) 70%);
   min-height: 100vh;
 }
 
@@ -59,6 +84,7 @@ button {
 
 button:focus-visible,
 input:focus-visible,
+select:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid var(--amber);
   outline-offset: 2px;

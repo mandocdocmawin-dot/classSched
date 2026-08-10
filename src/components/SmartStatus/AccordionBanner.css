@@ -4,19 +4,33 @@
   margin-bottom: var(--gap);
   cursor: pointer;
   border: 1px solid var(--border);
-  background: var(--panel-raised);
+  background: var(--panel);
   position: relative;
-  transition: border-color 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.banner:hover {
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
 }
 
 .banner--f2f {
   border-color: var(--amber-dim);
-  box-shadow: inset 3px 0 0 var(--amber);
+  box-shadow: inset 3px 0 0 var(--amber), var(--shadow-sm);
+}
+
+.banner--f2f:hover {
+  border-color: var(--amber);
 }
 
 .banner--online {
   border-color: var(--teal-dim);
-  box-shadow: inset 3px 0 0 var(--teal);
+  box-shadow: inset 3px 0 0 var(--teal), var(--shadow-sm);
+}
+
+.banner--online:hover {
+  border-color: var(--teal);
 }
 
 .banner__top {
@@ -46,7 +60,7 @@
 
 .banner__title {
   margin: 8px 0 0;
-  font-size: 19px;
+  font-size: clamp(17px, 3.5vw, 19px);
   font-weight: 600;
   color: var(--text);
   letter-spacing: 0.01em;
@@ -92,24 +106,45 @@
 }
 
 .banner__action {
-  margin-top: 4px;
-  padding: 10px 16px;
+  margin-top: 6px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
   border-radius: var(--radius-sm);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   background: var(--amber);
-  color: #10131a;
+  color: var(--amber-on);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.banner__action:hover {
+  background: var(--amber-hover);
+  transform: translateY(-1px);
+}
+
+.banner__action:active {
+  transform: translateY(1px);
 }
 
 .banner--online .banner__action {
   background: var(--teal);
+  color: #042f2e;
+}
+
+.banner--online .banner__action:hover {
+  background: #5eead4;
 }
 
 .banner__progress {
   margin-top: 14px;
   height: 4px;
   width: 100%;
-  background: var(--border);
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -128,8 +163,13 @@
 /* Idle / on-break state */
 .banner--idle {
   cursor: default;
-  background: var(--panel);
+  background: var(--panel-raised);
   border-style: dashed;
+}
+
+.banner--idle:hover {
+  background: var(--panel-raised);
+  border-color: var(--border);
 }
 
 .banner--idle .banner__eyebrow {
@@ -148,3 +188,4 @@
 .banner__idle-text strong {
   color: var(--amber);
 }
+

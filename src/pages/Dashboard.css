@@ -1,24 +1,24 @@
 .dashboard {
-  padding: 20px 16px 40px;
-  max-width: var(--max-width);
+  padding: 16px 12px 36px;
+  max-width: 100%;
   margin: 0 auto;
   min-height: 100vh;
   transition: max-width 0.2s ease;
 }
 
-/* Tablet: give the mobile layout a little more breathing room */
+/* Tablet: give layout breathing room */
 @media (min-width: 640px) {
   .dashboard {
-    max-width: 560px;
-    padding-top: 32px;
+    max-width: 580px;
+    padding: 28px 24px 48px;
   }
 }
 
-/* Desktop: stop stacking everything in a phone-width column */
+/* Desktop grid layout */
 @media (min-width: 900px) {
   .dashboard {
-    max-width: 1040px;
-    padding: 40px 32px 60px;
+    max-width: 1060px;
+    padding: 36px 32px 60px;
   }
 
   .dashboard__header {
@@ -26,7 +26,7 @@
   }
 
   .dashboard__title {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .dashboard__subtitle {
@@ -46,7 +46,7 @@
 
 .dashboard__title {
   margin: 0 0 4px;
-  font-size: 21px;
+  font-size: clamp(18px, 4vw, 24px);
   color: var(--text);
   letter-spacing: 0.01em;
 }
@@ -55,30 +55,48 @@
   margin: 0;
   font-size: 12px;
   color: var(--text-muted);
-  max-width: 26ch;
+  max-width: 32ch;
+  line-height: 1.5;
 }
 
 .dashboard__add-btn {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 10px 14px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
   background: var(--amber);
-  color: #10131a;
+  color: var(--amber-on);
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.dashboard__add-btn:hover {
+  background: var(--amber-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard__add-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* Mobile reading order: Banner -> Today's List -> Week Calendar -> Week Glance */
 .dashboard__grid {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
     'banner'
-    'calendar'
     'list'
+    'calendar'
     'week';
   gap: 0;
 }
@@ -120,47 +138,76 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 48px 20px;
+  padding: 40px 20px;
   color: var(--text-muted);
   background: var(--panel);
   border: 1px dashed var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
 
 .dashboard__empty-icon {
-  font-size: 28px;
+  font-size: 32px;
   margin-bottom: 12px;
-  opacity: 0.8;
+  color: var(--amber);
+  opacity: 0.9;
 }
 
 .dashboard__empty-text {
-  margin: 0 0 18px;
+  margin: 0 0 20px;
   font-size: 13px;
-  max-width: 30ch;
+  max-width: 32ch;
   line-height: 1.6;
+  color: var(--text-muted);
 }
 
 .dashboard__empty-cta {
-  padding: 11px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 24px;
   background: var(--amber);
-  color: #10131a;
+  color: var(--amber-on);
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 13px;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.dashboard__empty-cta:hover {
+  background: var(--amber-hover);
+  transform: translateY(-1px);
+}
+
+.dashboard__empty-cta:active {
+  transform: translateY(1px);
 }
 
 .dashboard__logout {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 28px auto 0;
-  padding: 8px 16px;
-  background: transparent;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 20px;
+  background: var(--panel-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-size: 12px;
+  font-weight: 500;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .dashboard__logout:hover {
-  border-color: var(--info-blue);
-  color: var(--info-blue);
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
+  color: var(--text);
+}
+
+.dashboard__logout:active {
+  transform: translateY(1px);
 }

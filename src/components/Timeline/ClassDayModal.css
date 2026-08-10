@@ -1,23 +1,25 @@
 .day-modal__overlay {
   position: fixed;
   inset: 0;
-  background: rgba(6, 8, 13, 0.72);
+  background: rgba(8, 10, 16, 0.8);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
   z-index: 100;
 }
 
 .day-modal {
   width: 100%;
-  max-width: 380px;
-  max-height: 80vh;
+  max-width: 400px;
+  max-height: 85vh;
   overflow-y: auto;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 20px;
+  box-shadow: var(--shadow-md);
 }
 
 .day-modal__header {
@@ -46,21 +48,27 @@
 
 .day-modal__close {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
-  display: flex;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--panel-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 14px;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .day-modal__close:hover {
-  border-color: var(--info-blue);
-  color: var(--info-blue);
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
+  color: var(--text);
+}
+
+.day-modal__close:active {
+  transform: translateY(1px);
 }
 
 .day-modal__holiday {
@@ -69,22 +77,25 @@
   align-items: center;
   text-align: center;
   gap: 10px;
-  padding: 22px 10px;
+  padding: 24px 12px;
+  background: var(--holiday-glow);
+  border: 1px solid var(--holiday-dim);
+  border-radius: var(--radius-sm);
 }
 
 .day-modal__holiday-icon {
-  font-size: 26px;
+  font-size: 28px;
 }
 
 .day-modal__holiday-text {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--text);
 }
 
 .day-modal__holiday-text strong {
-  color: var(--holiday-red, #ff6b6b);
+  color: var(--holiday-accent);
 }
 
 .day-modal__holiday-sub {
@@ -103,12 +114,18 @@
   background: var(--panel-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 12px;
-  box-shadow: inset 3px 0 0 var(--amber-dim);
+  padding: 14px;
+  box-shadow: inset 3px 0 0 var(--amber);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.day-modal__class:hover {
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
 }
 
 .day-modal__class--online {
-  box-shadow: inset 3px 0 0 var(--teal-dim);
+  box-shadow: inset 3px 0 0 var(--teal);
 }
 
 .day-modal__class-top {
@@ -143,6 +160,7 @@
 
 .day-modal__class-gate {
   color: var(--text);
+  font-weight: 500;
 }
 
 .day-modal__empty {
@@ -150,4 +168,4 @@
   color: var(--text-muted);
   font-size: 13px;
   padding: 24px 0;
-}
+}

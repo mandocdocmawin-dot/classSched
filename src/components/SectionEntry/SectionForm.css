@@ -1,13 +1,14 @@
 .section-modal__overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 6, 10, 0.7);
-  backdrop-filter: blur(2px);
+  background: rgba(8, 10, 16, 0.8);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 100;
   animation: fade-in 0.15s ease;
+  padding: 0;
 }
 
 @keyframes fade-in {
@@ -23,11 +24,13 @@
   border-bottom: none;
   border-radius: 18px 18px 0 0;
   padding: 20px 20px 28px;
+  box-shadow: var(--shadow-md);
 }
 
 @media (min-width: 540px) {
   .section-modal__overlay {
     align-items: center;
+    padding: 20px;
   }
   .section-modal {
     border-radius: var(--radius);
@@ -46,13 +49,32 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   color: var(--amber);
+  font-weight: 600;
 }
 
 .section-modal__close {
-  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-size: 14px;
-  padding: 4px 8px;
+  padding: 0;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.section-modal__close:hover {
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
+  color: var(--text);
+}
+
+.section-modal__close:active {
+  transform: translateY(1px);
 }
 
 .section-modal__field-label {
@@ -69,6 +91,7 @@
 }
 
 .section-modal__code-input {
+  min-height: 48px;
   padding: 12px 14px;
   background: var(--panel-raised);
   border: 1px dashed var(--amber-dim);
@@ -77,13 +100,14 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  transition: border-color 0.15s ease, border-style 0.15s ease;
+  transition: border-color 0.15s ease, border-style 0.15s ease, box-shadow 0.15s ease;
 }
 
 .section-modal__code-input:focus {
   outline: none;
   border-style: solid;
   border-color: var(--amber);
+  box-shadow: 0 0 0 2px var(--amber-glow);
 }
 
 .section-modal__code-input::placeholder {
@@ -101,15 +125,33 @@
 .section-modal__error {
   margin: -8px 0 14px;
   font-size: 12px;
+  font-weight: 500;
   color: var(--danger);
+  background: var(--danger-glow);
+  border: 1px solid var(--danger-dim);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
 }
 
 .section-modal__submit {
   width: 100%;
+  min-height: 48px;
   padding: 14px;
   background: var(--amber);
-  color: #10131a;
+  color: var(--amber-on);
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.section-modal__submit:hover {
+  background: var(--amber-hover);
+  transform: translateY(-1px);
+}
+
+.section-modal__submit:active {
+  transform: translateY(1px);
 }

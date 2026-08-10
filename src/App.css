@@ -1,3 +1,23 @@
 .App {
   min-height: 100vh;
 }
+
+.access-denied-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--danger-glow);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
