@@ -1,10 +1,4 @@
 // src/services/sheetsAPI.js
-//
-// Gumagamit ng Sheets API (values.get) para kunin yung buong raw grid
-// ng isang tab (halimbawa "BSIS"), tapos pina-parse dito sa JavaScript
-// papunta sa listahan ng klase per section. Read-only lahat — walang
-// kailangang Editor access sa Sheet, Viewer sapat na.
-
 import { normalizeTimeRange } from "../utils/scheduleHelpers";
 
 const YEAR_LEVEL_MAP = {
@@ -88,18 +82,12 @@ export function parseScheduleGrid(rows, tabName) {
       const cellValue = String(row[c] || "").trim();
       const timeMatch = cellValue.match(TIME_PATTERN);
       if (!timeMatch) continue;
-
-      // Ang oras sa sheet ay hindi military time (walang AM/PM indicator,
-      // hal. "1:00" lang, hindi "13:00"). Gamitin ang normalizeTimeRange
-      // (start+end sabay, hindi hiwalay) para i-convert papunta sa tunay
-      // na 24-hour "HH:MM" bago i-store.
       const { startTime, endTime } = normalizeTimeRange(
         `${timeMatch[1]}:${timeMatch[2]}`,
         `${timeMatch[3]}:${timeMatch[4]}`
       );
       const day = DAY_COLUMNS[c];
 
-      // Kunin sumusunod na non-blank lines sa parehong column
       const details = [];
       let nr = r + 1;
       while (nr < rows.length) {

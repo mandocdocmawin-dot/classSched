@@ -1,0 +1,181 @@
+.week-calendar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: var(--gap);
+}
+
+.week-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.week-calendar__title {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.week-calendar__nav-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.week-calendar__nav-btn:hover {
+  border-color: var(--amber-dim);
+  color: var(--amber);
+}
+
+.week-calendar__weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.week-calendar__weekday-label {
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.week-calendar__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.week-calendar__row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.week-calendar__day {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.week-calendar__day:hover {
+  border-color: var(--amber-dim);
+}
+
+.week-calendar__day:active {
+  transform: translateY(1px);
+}
+
+.week-calendar__day--blank {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.week-calendar__day--today {
+  border-color: var(--amber);
+}
+
+.week-calendar__day--today .week-calendar__day-date {
+  color: var(--amber);
+}
+
+.week-calendar__day--selected {
+  background: rgba(255, 176, 0, 0.1);
+  border-color: var(--amber);
+}
+
+.week-calendar__day--empty {
+  opacity: 0.55;
+}
+
+/* Holiday (PH calendar) — sadyang "black"/mas madilim at may pulang
+   accent, para agad na mapansin kaiba sa parehong "may pasok" (amber)
+   at "walang klase" (muted gray) states. */
+.week-calendar__day--holiday {
+  background: #0a0b10;
+  border-color: rgba(255, 90, 90, 0.45);
+  opacity: 1;
+}
+
+.week-calendar__day--holiday .week-calendar__day-date {
+  color: var(--holiday-red, #ff6b6b);
+}
+
+.week-calendar__day--holiday.week-calendar__day--selected {
+  background: rgba(255, 90, 90, 0.12);
+  border-color: var(--holiday-red, #ff6b6b);
+}
+
+.week-calendar__day-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.week-calendar__day-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.week-calendar__day-dot--active {
+  background: var(--amber);
+}
+
+.week-calendar__day-dot--holiday {
+  background: var(--holiday-red, #ff6b6b);
+}
+
+.week-calendar__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.week-calendar__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.week-calendar__legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.week-calendar__legend-dot--active {
+  background: var(--amber);
+}
+
+.week-calendar__legend-dot--holiday {
+  background: var(--holiday-red, #ff6b6b);
+}

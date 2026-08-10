@@ -1,9 +1,4 @@
 // src/utils/scheduleHelpers.js
-//
-// Shared helpers na ginagamit ng AccordionBanner, ScheduleList, at
-// WeekGlance para i-convert yung raw class data (galing sa sheetsAPI.js)
-// papunta sa format na kailangan ng UI components.
-
 const DAY_FULL_TO_SHORT = {
   Monday: 'MON',
   Tuesday: 'TUE',
@@ -26,40 +21,19 @@ export function getCurrentDayCode() {
   return map[jsDay];
 }
 
-// Ang raw na oras sa Google Sheet ay hindi military time at walang
-// AM/PM indicator (hal. "1:00", "8:00", "12:00" lang). Kailangan itong
-// i-convert muna papuntang tunay na 24-hour "HH:MM" BAGO ito ipasa sa
-// ibang functions dito (timeToMinutes, getClassStatus, atbp), dahil
-// yun lahat ay umaasa na tama na yung 24-hour format.
-//
-// Heuristic (base sa karaniwang oras ng klase, 7:00 AM - 9:00 PM):
-//   - Oras 1–6  -> ituturing na PM  (1:00 -> 13:00, ..., 6:00 -> 18:00)
-//   - Oras 7–12 -> ituturing na AM / as-is (7:00 -> 07:00, 12:00 -> 12:00 na tanghali)
-//
-// Halimbawa base sa sheet mo:
-//   "8:00 - 10:00"  -> 08:00 - 10:00 (umaga)
-//   "1:00 - 3:00"   -> 13:00 - 15:00 (hapon)
-//   "5:00 - 7:00"   -> 17:00 - 19:00 (gabi)
+
 export function normalizeScheduleTime(rawTimeStr) {
   const [hStr, mStr = '00'] = rawTimeStr.trim().split(':');
   let h = parseInt(hStr, 10);
   const m = String(parseInt(mStr, 10)).padStart(2, '0');
 
   if (h >= 1 && h <= 6) {
-    h += 12; // 1:00–6:00 nagiging 13:00–18:00 (PM)
+    h += 12; 
   }
-  // 7–12 nananatiling as-is (7 AM hanggang 12 PM/tanghali)
 
   return `${String(h).padStart(2, '0')}:${m}`;
 }
 
-// Ino-normalize yung start at end na magkasama (hindi bawat isa nang
-// hiwalay), dahil may boundary case ang "1-6 -> PM, 7-12 -> AM/as-is"
-// heuristic: kapag ang endTime mismo ay nasa 7-12 range (hal. yung "7"
-// sa "5:00 - 7:00"), maaaring maling AM pa rin ang resulta kahit alam
-// nating dapat PM ito (dahil nasa hapon/gabi na ang start). Kaya:
-// kapag ang normalized end ay <= normalized start, ituturing na sumobra
-// ito sa parehong araw pa rin at idadagdag ng 12 oras (i.e. PM).
 export function normalizeTimeRange(rawStart, rawEnd) {
   const startTime = normalizeScheduleTime(rawStart);
   let endTime = normalizeScheduleTime(rawEnd);
@@ -78,10 +52,6 @@ export function normalizeTimeRange(rawStart, rawEnd) {
   return { startTime, endTime };
 }
 
-// Hinahati yung raw range string galing sa sheet (hal. "8:00 - 10:00" o
-// "8:00-10:00") papunta sa { startTime, endTime } gamit ang
-// normalizeTimeRange. Ito yung gagamitin sa sheetsAPI.js kapag pino-parse
-// yung raw cell value bago i-save sa class object.
 export function parseScheduleTimeRange(rawRangeStr) {
   const [rawStart, rawEnd] = rawRangeStr.split('-').map((s) => s.trim());
   return normalizeTimeRange(rawStart, rawEnd);
@@ -105,12 +75,6 @@ export function formatTimeRange(startTime, endTime) {
   return `${formatTime12h(startTime)} – ${formatTime12h(endTime)}`;
 }
 
-// Ibinabalik: 'ongoing' | 'upcoming' | 'done'
-// MAHALAGA: 'ongoing'/'done' ay may kahulugan LANG kung ang klase ay
-// para sa ARAW NA ITO. Kapag tumitingin ka ng ibang araw (hal. Thursday
-// habang Lunes ngayon), walang saysay na "ongoing"/"done" batay sa
-// current clock time — kaya laging 'upcoming' na lang ang ibabalik kung
-// hindi tugma ang classDay sa totoong araw ngayon.
 export function getClassStatus(startTime, endTime, classDay) {
   if (classDay && getShortDay(classDay) !== getCurrentDayCode()) {
     return 'upcoming';
@@ -163,11 +127,11 @@ export function pickCurrentOrNextClass(classes) {
   return { status: 'idle', classItem: null, minutesUntil: null };
 }
 
-// Ibinabalik yung unique na listahan ng short-day-codes na may klase
 export function getDaysWithClasses(classes) {
   const days = new Set(classes.map((c) => getShortDay(c.day)));
   return DAY_ORDER.filter((d) => days.has(d));
 }
+
 export function formatMinutesUntil(totalMinutes) {
   if (totalMinutes < 60) {
     return `${totalMinutes} min${totalMinutes === 1 ? '' : 's'}`;
@@ -179,4 +143,19 @@ export function formatMinutesUntil(totalMinutes) {
 
   if (mins === 0) return hourLabel;
   return `${hourLabel} ${mins} min${mins === 1 ? '' : 's'}`;
+}
+
+export function getCurrentWeekDates() {
+  const today = new Date();
+  const jsDay = today.getDay();
+  const diffToMonday = jsDay === 0 ? -6 : 1 - jsDay;
+
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + diffToMonday);
+
+  return DAY_ORDER.map((code, index) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + index);
+    return { code, date: d.getDate() };
+  });
 }

@@ -5,8 +5,22 @@ import './ScheduleList.css';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-const ScheduleList = ({ classes = [] }) => {
-  const [filterDay, setFilterDay] = useState(getCurrentDayCode());
+const ScheduleList = ({ classes = [], filterDay: controlledFilterDay, onFilterDayChange }) => {
+  const [internalFilterDay, setInternalFilterDay] = useState(getCurrentDayCode());
+
+  // Controlled mode: kapag pinasahan ng filterDay prop (galing sa
+  // WeekCalendar via Dashboard), gamitin yun. Kung wala, gumana pa rin
+  // nang mag-isa gamit ang sarili niyang state (backward-compatible pa
+  // rin ang component na ito kahit walang controlling parent).
+  const filterDay = controlledFilterDay ?? internalFilterDay;
+
+  const handleFilterChange = (day) => {
+    if (onFilterDayChange) {
+      onFilterDayChange(day);
+    } else {
+      setInternalFilterDay(day);
+    }
+  };
 
   const filteredClasses = useMemo(
     () =>
@@ -40,7 +54,7 @@ const ScheduleList = ({ classes = [] }) => {
           <span className="mono-num">FILTER</span>
           <select
             value={filterDay}
-            onChange={(e) => setFilterDay(e.target.value)}
+            onChange={(e) => handleFilterChange(e.target.value)}
             className="schedule-list__filter-select"
           >
             {DAYS.map((d) => (

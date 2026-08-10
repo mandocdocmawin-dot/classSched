@@ -3,11 +3,11 @@ import SectionForm from '../components/SectionEntry/SectionForm';
 import AccordionBanner from '../components/SmartStatus/AccordionBanner';
 import ScheduleList from '../components/Timeline/ScheduleList';
 import WeekGlance from '../components/Timeline/WeekGlance';
+import WeekCalendar from '../components/Timeline/WeekCalendar';
 import { getScheduleForSection } from '../services/sheetsAPI';
+import { getCurrentDayCode } from '../utils/scheduleHelpers';
 import './Dashboard.css';
 
-// Kinukuha yung program prefix (letters) mula sa section code.
-// Halimbawa: "BSIS2" -> "BSIS", "ACT1" -> "ACT"
 function getTabNameFromSection(sectionCode) {
   const match = sectionCode.match(/^[A-Za-z]+/);
   return match ? match[0].toUpperCase() : sectionCode;
@@ -19,11 +19,13 @@ const Dashboard = ({ accessToken, onLogout }) => {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(getCurrentDayCode());
 
   const handleSectionSubmit = (code) => {
     console.log('Loading data for:', code);
     setActiveSection(code);
     setIsModalOpen(false);
+    setSelectedDay(getCurrentDayCode());
   };
 
   useEffect(() => {
@@ -93,7 +95,18 @@ const Dashboard = ({ accessToken, onLogout }) => {
               <AccordionBanner classes={classes} />
             </div>
             <div className="dashboard__slot-list">
-              <ScheduleList classes={classes} />
+              <ScheduleList
+                classes={classes}
+                filterDay={selectedDay}
+                onFilterDayChange={setSelectedDay}
+              />
+            </div>
+            <div className="dashboard__slot-calendar">
+              <WeekCalendar
+                classes={classes}
+                selectedDay={selectedDay}
+                onSelectDay={setSelectedDay}
+              />
             </div>
             <div className="dashboard__slot-week">
               <WeekGlance classes={classes} />

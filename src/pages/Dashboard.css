@@ -77,6 +77,7 @@
   grid-template-columns: 1fr;
   grid-template-areas:
     'banner'
+    'calendar'
     'list'
     'week';
   gap: 0;
@@ -84,6 +85,10 @@
 
 .dashboard__slot-banner {
   grid-area: banner;
+}
+
+.dashboard__slot-calendar {
+  grid-area: calendar;
 }
 
 .dashboard__slot-list {
@@ -99,6 +104,7 @@
     grid-template-columns: 1fr 340px;
     grid-template-areas:
       'list banner'
+      'list calendar'
       'list week';
     align-items: start;
     column-gap: 28px;
