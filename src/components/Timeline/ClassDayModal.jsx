@@ -49,7 +49,7 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
           {holiday ? (
             <div className="day-modal__holiday">
               <span className="day-modal__holiday-icon" aria-hidden="true">
-                🎌
+                📅
               </span>
               <p className="day-modal__holiday-text">
                 <strong>No class</strong> today — {holiday.name}.
