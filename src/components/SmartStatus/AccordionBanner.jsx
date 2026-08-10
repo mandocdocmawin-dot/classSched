@@ -6,7 +6,6 @@ const AccordionBanner = ({ classes = [] }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { status, classItem, minutesUntil } = pickCurrentOrNextClass(classes);
 
-  // Walang klase ngayon (idle) at walang susunod na klase ngayong araw
   if (status === 'idle' && !classItem) {
     return (
       <div className="banner banner--idle">

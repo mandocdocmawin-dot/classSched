@@ -138,9 +138,6 @@ export function getProgressPercent(startTime, endTime) {
   return Math.round(((nowMinutes - start) / (end - start)) * 100);
 }
 
-// Sinasala yung listahan ng classes ngayong araw, pinagso-sort by time,
-// tapos hinahanap yung kasalukuyang ongoing na klase (kung meron), o
-// yung pinaka-malapit na susunod.
 export function pickCurrentOrNextClass(classes) {
   const todayCode = getCurrentDayCode();
   const todaysClasses = classes
@@ -171,10 +168,6 @@ export function getDaysWithClasses(classes) {
   const days = new Set(classes.map((c) => getShortDay(c.day)));
   return DAY_ORDER.filter((d) => days.has(d));
 }
-
-// Nagko-convert ng raw minutes (hal. 96) papuntang mas madaling basahing
-// format na "1 hr 36 mins", para hindi na kailangan i-mental-math ng user
-// yung "96 mins" papuntang oras.
 export function formatMinutesUntil(totalMinutes) {
   if (totalMinutes < 60) {
     return `${totalMinutes} min${totalMinutes === 1 ? '' : 's'}`;
