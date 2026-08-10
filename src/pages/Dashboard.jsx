@@ -13,8 +13,18 @@ function getTabNameFromSection(sectionCode) {
   return match ? match[0].toUpperCase() : sectionCode;
 }
 
+const SECTION_STORAGE_KEY = 'classsched_active_section';
+
+function getStoredSection() {
+  try {
+    return localStorage.getItem(SECTION_STORAGE_KEY) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 const Dashboard = ({ accessToken, onLogout }) => {
-  const [activeSection, setActiveSection] = useState(null);
+  const [activeSection, setActiveSection] = useState(getStoredSection);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,8 +34,22 @@ const Dashboard = ({ accessToken, onLogout }) => {
   const handleSectionSubmit = (code) => {
     console.log('Loading data for:', code);
     setActiveSection(code);
+    try {
+      localStorage.setItem(SECTION_STORAGE_KEY, code);
+    } catch (e) {
+      console.error('Failed to save section:', e);
+    }
     setIsModalOpen(false);
     setSelectedDay(getCurrentDayCode());
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem(SECTION_STORAGE_KEY);
+    } catch (e) {
+      console.error('Failed to clear section:', e);
+    }
+    onLogout();
   };
 
   useEffect(() => {
@@ -119,8 +143,6 @@ const Dashboard = ({ accessToken, onLogout }) => {
             🎫
           </span>
           <p className="dashboard__empty-text">
-            No section set yet. Tap "Set Section" to pick your program and
-            year and pull up your weekly schedule.
           </p>
           <button className="dashboard__empty-cta" onClick={() => setIsModalOpen(true)}>
             + Set Section
@@ -128,7 +150,7 @@ const Dashboard = ({ accessToken, onLogout }) => {
         </div>
       )}
 
-      <button className="dashboard__logout" onClick={onLogout}>
+      <button className="dashboard__logout" onClick={handleLogout}>
         Sign out
       </button>
     </div>
