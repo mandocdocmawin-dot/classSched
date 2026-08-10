@@ -13,7 +13,7 @@ const GoogleLogin = ({ onLogin }) => {
             <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .97 4.94l3 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
           </svg>
         </span>
-        <span className="google-login__label">Check in with Google</span>
+        <span className="google-login__label">Sign in with Google</span>
       </button>
       <p className="google-login__note">
         <span className="google-login__note-dot" aria-hidden="true" />

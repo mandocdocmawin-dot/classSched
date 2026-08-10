@@ -19,7 +19,7 @@ const Login = ({ onLoginSuccess }) => {
         </h1>
 
         <p className="login__subtitle">
-          Your day, gate by gate. Check in to see what's next, where it's held,
+          Your day, gate by gate. Sign in to see what's next, where it's held,
           and how much time you have left.
         </p>
 

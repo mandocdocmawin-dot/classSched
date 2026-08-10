@@ -1,21 +1,49 @@
-// src/services/googleAuth.js
+// googleAuth.js
+let tokenClient = null;
 
-/**
- * Initiates the Google OAuth 2.0 login flow.
- * Returns a placeholder token for now.
- */
-export const loginWithGoogle = async () => {
-  console.log("Initiating Google Login...");
-  // TODO: Implement actual Google OAuth logic here
-  return {
-    token: "placeholder_oauth_token",
-    user: { email: "student@edu.ph", name: "BSIS Student" }
-  };
-};
+export function initGoogleAuth(onTokenReceived) {
+  // wait if the Google script hasn't loaded yet
+  if (!window.google || !window.google.accounts) {
+    setTimeout(() => initGoogleAuth(onTokenReceived), 200);
+    return;
+  }
 
-/**
- * Validates if the email is a valid .edu account.
- */
-export const isEduAccount = (email) => {
-  return email.endsWith('.edu.ph') || email.endsWith('.edu');
-};
+  tokenClient = window.google.accounts.oauth2.initTokenClient({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    scope: "https://www.googleapis.com/auth/spreadsheets.readonly",
+    hosted_domain: "student.laverdad.edu.ph",
+    callback: (tokenResponse) => {
+      if (tokenResponse.error) {
+        console.error("Auth error:", tokenResponse);
+        return;
+      }
+      onTokenReceived(tokenResponse.access_token);
+    },
+  });
+}
+
+export function signIn() {
+  if (!tokenClient) {
+    console.error("Google Auth has not been initialized yet.");
+    return;
+  }
+  tokenClient.requestAccessToken();
+}
+
+// silent refresh — call before token expiry
+export function refreshToken() {
+  if (!tokenClient) return;
+  tokenClient.requestAccessToken({ prompt: "" });
+}
+
+export async function verifyEduAndFetchSheet(accessToken) {
+  const res = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${import.meta.env.VITE_SPREADSHEET_ID}/values/Sheet1`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+
+  if (res.status === 403) {
+    throw new Error("UNAUTHORIZED");
+  }
+  return res.json();
+}

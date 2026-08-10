@@ -1,27 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import { initGoogleAuth, signIn, verifyEduAndFetchSheet } from './services/googleAuth';
 import './App.css';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [accessToken, setAccessToken] = useState(null);
+  const [authError, setAuthError] = useState(false);
+
+  useEffect(() => {
+    initGoogleAuth(async (token) => {
+      try {
+        await verifyEduAndFetchSheet(token);
+        setAccessToken(token);
+        setAuthError(false);
+      } catch (e) {
+        setAuthError(true);
+      }
+    });
+  }, []);
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-
-  const handleLogin = () => {
-    // TODO: dito ipapasok ang resulta ng aktwal na Google OAuth flow (googleAuth.js)
-    setIsLoggedIn(true);
+    setAccessToken(null);
   };
 
   return (
     <div className="App">
-      {isLoggedIn ? (
+      {accessToken ? (
         <Dashboard user={{ name: 'BSIS Student' }} onLogout={handleLogout} />
       ) : (
-        <Login onLoginSuccess={handleLogin} />
+        <Login onLoginSuccess={signIn} />
       )}
+      {authError && <div className="access-denied-banner">Access Denied — .edu account required</div>}
     </div>
   );
 }
