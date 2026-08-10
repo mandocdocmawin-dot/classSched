@@ -7,11 +7,6 @@ const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
 const ScheduleList = ({ classes = [], filterDay: controlledFilterDay, onFilterDayChange }) => {
   const [internalFilterDay, setInternalFilterDay] = useState(getCurrentDayCode());
-
-  // Controlled mode: kapag pinasahan ng filterDay prop (galing sa
-  // WeekCalendar via Dashboard), gamitin yun. Kung wala, gumana pa rin
-  // nang mag-isa gamit ang sarili niyang state (backward-compatible pa
-  // rin ang component na ito kahit walang controlling parent).
   const filterDay = controlledFilterDay ?? internalFilterDay;
 
   const handleFilterChange = (day) => {

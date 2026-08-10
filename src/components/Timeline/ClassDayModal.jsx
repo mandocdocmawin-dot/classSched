@@ -37,7 +37,7 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
           <div>
             <span className="day-modal__date mono-num">{formattedDate}</span>
             <h3 className="day-modal__title">
-              {holiday ? holiday.name : dayClasses.length > 0 ? 'Your Classes' : 'Walang Klase'}
+              {holiday ? holiday.name : dayClasses.length > 0 ? 'Your Classes' : 'No Class'}
             </h3>
           </div>
           <button className="day-modal__close" onClick={onClose} aria-label="Close">
@@ -52,7 +52,7 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
                 🎌
               </span>
               <p className="day-modal__holiday-text">
-                <strong>Walang pasok</strong> sa araw na ito — {holiday.name}.
+                <strong>No class</strong> today — {holiday.name}.
               </p>
               {holiday.description && (
                 <p className="day-modal__holiday-sub">{holiday.description}</p>
@@ -79,7 +79,7 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
               ))}
             </div>
           ) : (
-            <p className="day-modal__empty">Walang klase na naka-iskedyul sa araw na ito.</p>
+            <p className="day-modal__empty">No classes scheduled for this day.</p>
           )}
         </div>
       </div>

@@ -184,15 +184,15 @@ const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
       <div className="week-calendar__legend">
         <span className="week-calendar__legend-item">
           <span className="week-calendar__legend-dot week-calendar__legend-dot--active" aria-hidden="true" />
-          May pasok
+          Has class
         </span>
         <span className="week-calendar__legend-item">
           <span className="week-calendar__legend-dot" aria-hidden="true" />
-          Walang klase
+          No class
         </span>
         <span className="week-calendar__legend-item">
           <span className="week-calendar__legend-dot week-calendar__legend-dot--holiday" aria-hidden="true" />
-          Walang pasok (holiday)
+          No class (holiday)
         </span>
       </div>
 

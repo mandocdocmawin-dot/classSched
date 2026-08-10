@@ -109,22 +109,19 @@
   opacity: 0.55;
 }
 
-/* Holiday (PH calendar) — sadyang "black"/mas madilim at may pulang
-   accent, para agad na mapansin kaiba sa parehong "may pasok" (amber)
-   at "walang klase" (muted gray) states. */
 .week-calendar__day--holiday {
   background: #0a0b10;
-  border-color: rgba(255, 90, 90, 0.45);
+  border-color: rgba(157, 140, 255, 0.45);
   opacity: 1;
 }
 
 .week-calendar__day--holiday .week-calendar__day-date {
-  color: var(--holiday-red, #ff6b6b);
+  color: var(--holiday-accent, #9d8cff);
 }
 
 .week-calendar__day--holiday.week-calendar__day--selected {
-  background: rgba(255, 90, 90, 0.12);
-  border-color: var(--holiday-red, #ff6b6b);
+  background: rgba(157, 140, 255, 0.12);
+  border-color: var(--holiday-accent, #9d8cff);
 }
 
 .week-calendar__day-date {
@@ -145,7 +142,7 @@
 }
 
 .week-calendar__day-dot--holiday {
-  background: var(--holiday-red, #ff6b6b);
+  background: var(--holiday-accent, #9d8cff);
 }
 
 .week-calendar__legend {
@@ -177,5 +174,5 @@
 }
 
 .week-calendar__legend-dot--holiday {
-  background: var(--holiday-red, #ff6b6b);
+  background: var(--holiday-accent, #9d8cff);
 }

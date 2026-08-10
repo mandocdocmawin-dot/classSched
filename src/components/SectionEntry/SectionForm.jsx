@@ -9,7 +9,6 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error }) => {
   if (!isOpen) return null;
 
   const handleAccessCodeChange = (e) => {
-    // 6 digits lang, walang space
     const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 6);
     setAccessCode(digitsOnly);
     setLocalError('');
@@ -28,14 +27,9 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error }) => {
       setLocalError('Hindi valid ang access code na ito.');
       return;
     }
-
-    // Ipasa yung nahanap na section code pataas sa Dashboard
     onSubmitSection(matchedSection);
   };
 
-  // Server-side error (hal. "Invalid section code" galing sa Sheets)
-  // muna ang ipapakita, pero kapag may fresh na local validation error
-  // (access code), i-prioritize yun dahil mas bagong action ito ni user.
   const displayError = localError || error;
 
   return (
