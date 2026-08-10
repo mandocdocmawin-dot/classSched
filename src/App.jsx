@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import { initGoogleAuth, signIn, verifyEduAndFetchSheet } from './services/googleAuth';
+import { initGoogleAuth, signIn, verifyEduAndFetchSheet, saveSession, getSession, clearSession } from './services/googleAuth';
 import './App.css';
 
 function App() {
@@ -9,9 +9,20 @@ function App() {
   const [authError, setAuthError] = useState(false);
 
   useEffect(() => {
-    initGoogleAuth(async (token) => {
+    const session = getSession();
+    if (session) {
+      setAccessToken(session.accessToken);
+      verifyEduAndFetchSheet(session.accessToken).catch(() => {
+        clearSession();
+        setAccessToken(null);
+        setAuthError(true);
+      });
+    }
+
+    initGoogleAuth(async (token, expiresIn) => {
       try {
         await verifyEduAndFetchSheet(token);
+        saveSession(token, expiresIn);
         setAccessToken(token);
         setAuthError(false);
       } catch (e) {
@@ -21,6 +32,7 @@ function App() {
   }, []);
 
   const handleLogout = () => {
+    clearSession();
     setAccessToken(null);
   };
 

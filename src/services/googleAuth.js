@@ -1,6 +1,50 @@
 // googleAuth.js
 let tokenClient = null;
 
+const SESSION_KEY = "classsched_session";
+
+export function saveSession(accessToken, expiresIn) {
+  const expiresAt = Date.now() + expiresIn * 1000;
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ accessToken, expiresAt }));
+  } catch (e) {
+    console.error("Failed to save session:", e);
+  }
+}
+
+export function getSession() {
+  let raw;
+  try {
+    raw = localStorage.getItem(SESSION_KEY);
+  } catch (e) {
+    return null;
+  }
+  if (!raw) return null;
+
+  let session;
+  try {
+    session = JSON.parse(raw);
+  } catch (e) {
+    clearSession();
+    return null;
+  }
+
+  if (!session?.accessToken || !session?.expiresAt || Date.now() >= session.expiresAt) {
+    clearSession();
+    return null;
+  }
+
+  return session;
+}
+
+export function clearSession() {
+  try {
+    localStorage.removeItem(SESSION_KEY);
+  } catch (e) {
+    console.error("Failed to clear session:", e);
+  }
+}
+
 export function initGoogleAuth(onTokenReceived) {
   if (!window.google || !window.google.accounts) {
     setTimeout(() => initGoogleAuth(onTokenReceived), 200);
@@ -16,7 +60,7 @@ export function initGoogleAuth(onTokenReceived) {
         console.error("Auth error:", tokenResponse);
         return;
       }
-      onTokenReceived(tokenResponse.access_token);
+      onTokenReceived(tokenResponse.access_token, tokenResponse.expires_in);
     },
   });
 }
