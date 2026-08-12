@@ -4,8 +4,11 @@ export const SECTION_ACCESS_CODES = {
   BSIS2: '110670',
   BSIS3: '990280',
   BSIS4: '000111',
+  BSA1: '123456',  // palitan ng actual 6-digit code
+  BSA2: '112233',
+  BSA3: '445566',
+  BSA4: '778899',
 };
-
 export function isValidAccessCode(sectionCode, accessCode) {
   const normalizedSection = String(sectionCode || '').trim().toUpperCase();
   const expectedCode = SECTION_ACCESS_CODES[normalizedSection];
