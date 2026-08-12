@@ -1,6 +1,6 @@
 # Project Implementation Guide: Smart Class Scheduling System (Mobile-First)
 
-**Target Audience:** BSIS Students and Academic Staff  
+**Target Audience:** Students and Academic Staff  
 **Primary Database:** Google Sheets  
 **Architecture:** Mobile-First Web Application  
 
@@ -60,6 +60,9 @@ To avoid hardcoding sensitive values into the codebase, store the following as e
     *   **F2F Classes:** Uses an "On-Campus" template highlighting the **Room Number** (e.g., EFS 403) and physical attendance reminders. Uses school emojis (🎒/🏫).
     *   **Online/Async Classes:** Uses an "Online Mode" template highlighting the **Modality** and includes a direct **Google Meet/Module Link** button. Uses tech emojis (💻/🌐).
 *   **Call-to-Action (CTA):** Every email includes a universal button linked to the web app frontend (`[Open Full Schedule Dashboard]`) so students can easily check their interactive accordion banner. This link includes a query parameter (e.g., `?section=BSIS2`) so the frontend can deep-link the user directly to their section's dashboard on load, without requiring them to re-enter their section code.
+*   **Combined Digest with Personal Activities (Final Design):** With the per-user personal Activities Sheet design finalized (see Section 5), this same 7:00 PM trigger no longer reports on class schedule alone — it also reads each student's personal Activities spreadsheet (auto-provisioned per Section 5.2) and merges both into a single evening email: **"Tomorrow's Classes"** + **"Upcoming & Overdue Activities"** in one digest, rather than as two separate emails.
+    *   Because each personal Activities Sheet lives in the *student's own* Google Drive (not the app's), the trigger — running as/under a dedicated service account (e.g., `smartschedule-bot@yourschool.edu`) — is granted read access to every provisioned sheet automatically at the moment it's created (see Section 5.2, Step 3). This allows one server-side job to read all provisioned personal sheets without requiring each student to manually share their file.
+    *   The trigger iterates over the list of provisioned `spreadsheetId`s shared with the service account, filters each user's activities for items due "soon" or already overdue, and appends that section to the corresponding user's evening email alongside their class schedule for the next day.
 
 > ⚠️ **Known gap (dahil sa Access Code redesign):** Dahil pinalitan na ng `SectionForm.jsx` ang section-code entry ng access-code-only entry (Section 2.2), wala nang direktang paraan para i-prefill ang `?section=BSIS2` query param sa form, dahil wala nang section-code field dito. Kung gusto pa ring gumana ang deep-link na 'to, kailangang i-parse ang query param sa `Dashboard.jsx` mismo at direktang i-set ang `activeSection` (i-skip ang modal), sa halip na i-pass papuntang `SectionForm`. Hindi pa ito naka-implement.
 
@@ -87,8 +90,8 @@ Positioned prominently at the top of the mobile interface, this component provid
 
 ### C. UI Component: Timeline Schedule (Quick-Tap Info Cards)
 * Below the Accordion Banner, remaining classes for the day are displayed in a clean, vertical scroll format (`ScheduleList.jsx`, gamit ang `InfoCard.jsx` per class).
-* **Quick-Tap Cards:** Initial view displays only course titles, time slots, at status badge (DONE/ONGOING/UPCOMING) para ma-maximize ang screen space. Tapping a card expands it (via chevron ▼/▲) to reveal **Instructor Name** at **Room/Modality**.
-* **Day-Aware Status:** Ang DONE/ONGOING na status ay valid lang kapag ang klaseng ipinapakita ay para sa **araw na ito mismo**. Kung ang user ay naka-filter (o na-click sa Week Calendar) sa ibang araw — hal. Thursday habang Lunes pa ang totoong araw — palaging "UPCOMING" na lang ang lalabas, dahil walang saysay ang real-time status ("ongoing"/"done") kung hindi naman talaga ngayong araw ang klase.
+* **Quick-Tap Cards:** Initial view displays only course titles, time slots, at status badge (DONE/ONGOING/UPCOMING/OVERDUE) para ma-maximize ang screen space. Tapping a card expands it (via chevron ▼/▲) to reveal **Instructor Name** at **Room/Modality**.
+* **Day-Aware Status:** Ang DONE/ONGOING na status ay valid lang kapag ang klaseng/aktibidad na ipinapakita ay para sa **araw na ito mismo**. Kung ang user ay naka-filter (o na-click sa Week Calendar) sa ibang araw — hal. Thursday habang Lunes pa ang totoong araw — palaging "UPCOMING" na lang ang lalabas, dahil walang saysay ang real-time status ("ongoing"/"done") kung hindi naman talaga ngayong araw ang klase.
 * **Filter:** May dropdown filter na pinipili kung anong araw ang ipapakita; kino-kontrol din ito ng bagong Week Calendar component (Section D) — pareho silang naka-sync sa parehong "napiling araw" state sa `Dashboard.jsx`.
 
 ### D. UI Component: Week Calendar
@@ -109,3 +112,76 @@ The interface must gracefully handle non-happy-path scenarios:
 | **Invalid/Missing Section Data** | Kung valid ang access code pero walang nahanap na data sa Sheet para sa nakatukoy na section, ipapakita ang error sa `Dashboard.jsx` (hindi na sa `SectionForm.jsx`, dahil dito na ito na-detect — pagkatapos ng fetch). |
 | **Session Expired** | If token refresh fails, prompt the user to re-authenticate via a non-disruptive banner or modal rather than a silent failure. |
 | **Network/Fetch Failure** | If the Sheets API request fails (timeout, offline, etc.), show a retry option instead of an indefinite loading state. |
+
+---
+
+## 5. Activities, Assignments & Projects Tracker (Manual, User-Editable)
+
+> **New feature.** On top of the fetched class schedule (which is read-mostly and sourced from the shared Google Sheet), the system adds a way for each user to **manually add, edit, and mark as done** their own activities/assignments/projects — this is not part of the shared section schedule, but a personal task list that can optionally be linked to a class.
+
+### 5.0 Final Design: Auto-Provisioned Personal Google Sheet per User
+
+> **Locked-in decision:** Instead of storing activities only in `localStorage` (device-only, no cross-device access) or in a single shared `Activities` tab inside the class Sheet (which would leak every student's personal tasks to anyone with edit access on that section's sheet), the final design **auto-provisions a private, per-user Google Sheet** the first time each student uses the Activities feature. The user ends up owning their own copy in their own Drive — it's private by default, portable, and survives even if the app is discontinued — while the app still keeps a fast local `localStorage` cache for offline use and instant loads.
+
+**Why this over the alternatives:**
+
+| | Shared tab in class Sheet | **Per-user personal Sheet (final)** |
+| :--- | :--- | :--- |
+| **Privacy** | Anyone with edit access to the section sheet can see every student's activities — Sheets has no row-level permissions | Private — each student's own file, in their own Drive |
+| **Setup complexity** | Simple, just one tab | Requires `drive.file` scope, a template file, `appDataFolder` tracking, and an auto-share step |
+| **Cron/trigger access** | Direct — one file to read | Requires service-account sharing on every provisioned file |
+| **Data ownership** | The app/section "owns" the data | The user owns their own copy — portable, not lost if the app is deactivated |
+
+Given the added privacy benefit — personal activities shouldn't be visible to the rest of the section — this is the approach being locked in as final, and it's also the better fit for the "personal task list" intent behind this feature.
+
+**Required new OAuth scope:** in addition to the existing Sheets scope, the app requires `https://www.googleapis.com/auth/drive.file` — a narrow, per-file scope that only grants access to files the app itself created, not the user's entire Drive. This avoids invasive Google verification (unlike a full Drive scope) and means the app can never see the student's unrelated personal files.
+
+**Provisioning flow:**
+
+| Step | What Happens |
+| :--- | :--- |
+| 1 | User signs in with their `.edu` account (existing flow, Section 2/3). |
+| 2 | On load, the app checks the user's Drive `appDataFolder` (a hidden, app-exclusive folder not visible in the user's normal Drive view) for an existing `activitiesSheetId` reference. |
+| 3 | If none exists yet → the app calls `Drive.files.copy(templateFileId)` to duplicate a master template spreadsheet (owned by the app/service account, pre-formatted with the correct headers — see Section 5.1) into **the user's own Drive**. The new copy is automatically shared (view/edit) with a dedicated service account (e.g., `smartschedule-bot@yourschool.edu`) via `Drive.permissions.create()`, and the resulting `spreadsheetId` is saved back into the user's `appDataFolder`. If an ID already exists, it's reused. As a fallback (e.g., if the `appDataFolder` reference is ever lost), the app can also look the file up via `Drive.files.list()` using a filename convention (e.g., `"SmartSchedule Activities - {email}"`).
+| 4 | Adding/editing an activity writes to the user's personal sheet via the Sheets API, **and** to the `localStorage` cache at the same time, so the UI stays fast and still works offline. |
+| 5 | The 7:00 PM trigger (running as the service account) reads every provisioned personal sheet it has been shared on and merges them into the combined "Tomorrow's Classes + Activities Due Soon" digest email (see Section 3.2). |
+
+**Known trade-off — conflict resolution:** because there are now two sources of truth (the `localStorage` cache and the personal Sheet), editing the same activity from two different devices before a sync completes can produce a conflict. This is an accepted, open trade-off of this design and is not yet resolved with a specific merge strategy (e.g., last-write-wins vs. timestamp comparison) — to be defined during implementation.
+
+### 5.1 Data Model
+Each activity entry (as a row in the user's personal Activities sheet, and mirrored in the local cache) has the following fields:
+
+| Field | Description |
+| :--- | :--- |
+| `id` | Unique identifier (e.g., generated via `crypto.randomUUID()`) |
+| `userEmail` | The owning user's `.edu` email — useful for the trigger/digest step even though the sheet itself is already per-user |
+| `section` | The user's section code (e.g., `BSIS2`) |
+| `title` | Name of the activity/assignment/project (e.g., "System Analysis Report Draft 2") |
+| `type` | `Assignment` \| `Project` \| `Quiz` \| `Other` |
+| `relatedSubject` | Optional link to a subject/class from the fetched schedule (e.g., `"Business Process Management"`), so the app knows which class this is tied to |
+| `dueDate` / `dueTime` | Target completion date and time |
+| `notes` | Free-text details/instructions |
+| `status` | **`Pending`** \| **`Ongoing`** \| **`Overdue`** \| **`Done`** (Dynamic state derived from current date/time and user check status) |
+| `createdAt` / `updatedAt` | Timestamps used for sorting |
+
+### 5.2 Storage Layer
+* **`src/utils/activityStorage.js`** — contains all CRUD helpers (`getActivities()`, `addActivity()`, `updateActivity()`, `deleteActivity()`, `toggleActivityStatus()`). Each helper writes to both the `localStorage` cache (for instant/offline access) and, when online, the user's personal Activities Sheet via the Sheets API.
+* **`src/utils/driveProvisioning.js`** — handles the provisioning flow described in Section 5.0: checking `appDataFolder` for an existing `activitiesSheetId`, calling `Drive.files.copy()` against the master template on first use, auto-sharing the new copy with the service account, and persisting the `spreadsheetId` back to `appDataFolder`.
+* **Namespacing (local cache):** the `localStorage` cache is still keyed per user + per section (e.g., `activities_{userEmail}_{sectionCode}`) so activities don't mix when switching section codes or signing in with a different `.edu` account on the same device.
+* **Limitation the user should know about:** the `localStorage` cache can still be cleared or lost on a different device/browser, but since the source of truth is now the user's own personal Sheet (not just the local cache), their activities are recoverable as long as they sign back in — the app just re-provisions/re-reads the existing sheet rather than starting over.
+
+### 5.3 New UI Components
+* **`ActivityForm.jsx`** — modal or bottom-sheet form to add/edit an activity (title, type, related subject dropdown, due date/time, notes).
+* **`ActivityList.jsx`** — list of all activities, organized/sorted by priority (Overdue & Ongoing first, then Pending, then Done), sortable by due date and filterable by status/type.
+* **Access point:**
+  * A new tab/section in `Dashboard.jsx` (e.g., "My Activities") that renders the full `ActivityList.jsx`.
+  * A quick-add shortcut from the expanded view of `InfoCard.jsx` for each subject (Section 4C) — a "+ Add Activity" button that pre-fills `relatedSubject` based on the class it was opened from.
+* **Visual cue on `InfoCard.jsx`:** if a subject has a linked pending, ongoing, or overdue activity, the card shows a small badge/dot indicator (e.g., "1 Overdue", "2 Pending") so the user notices it even while the card is still collapsed.
+
+### 5.4 Dynamic Status Calculation & Behavior Rules
+The system determines an activity's status using the following rules:
+
+* **`Ongoing`**: Applied when the due date is **today** (`ngayong araw`) and the current time is within the activity's scheduled period (or before the end of the day), provided the user has not yet checked it off as complete.
+* **`Overdue`**: Triggered automatically starting the **next day** (o kinabukasan) or after the specific `dueDate`/`dueTime` has passed, if the user **has not checked/marked** the activity as complete (`Done`).
+* **`Pending`**: Default status for activities scheduled for a **future date** that are not yet active/due today.
+* **`Done`**: Applied immediately when the user manually checks/toggles the activity complete, regardless of whether it was previously Pending, Ongoing, or Overdue.
