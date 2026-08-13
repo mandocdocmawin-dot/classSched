@@ -20,10 +20,6 @@ const DAY_COLUMNS = {
 const TIME_PATTERN = /^(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})$/;
 const YEAR_HEADER_PATTERN = /(\d(?:ST|ND|RD|TH)\s+YEAR)/i;
 
-/**
- * Kumuha ng buong raw grid data mula sa isang tab (hal. "BSIS").
- * Ginagamit yung !A1:H200 range para saklawin lahat ng year-level blocks.
- */
 export async function fetchRawSheetGrid(accessToken, tabName) {
   const spreadsheetId = import.meta.env.VITE_SPREADSHEET_ID;
   const range = `${tabName}!A1:H300`;
@@ -77,7 +73,6 @@ export function parseScheduleGrid(rows, tabName) {
 
     if (!currentSection) continue;
 
-    // Scan columns B(1) - G(6) for a time-pattern cell
     for (let c = 1; c <= 6; c++) {
       const cellValue = String(row[c] || "").trim();
       const timeMatch = cellValue.match(TIME_PATTERN);
@@ -127,10 +122,6 @@ export function parseScheduleGrid(rows, tabName) {
   return results;
 }
 
-/**
- * High-level function: kunin at i-parse ang schedule ng isang tab,
- * i-filter papunta sa isang specific section code (hal. "BSIS2").
- */
 export async function getScheduleForSection(accessToken, tabName, sectionCode) {
   const rawGrid = await fetchRawSheetGrid(accessToken, tabName);
   const allClasses = parseScheduleGrid(rawGrid, tabName);

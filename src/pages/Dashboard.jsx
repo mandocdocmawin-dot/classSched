@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import SectionForm from '../components/SectionEntry/SectionForm';
-import AccordionBanner from '../components/SmartStatus/AccordionBanner';
 import ScheduleList from '../components/Timeline/ScheduleList';
 import WeekGlance from '../components/Timeline/WeekGlance';
 import WeekCalendar from '../components/Timeline/WeekCalendar';
+import ActivityList from '../components/Activities/ActivityList';
 import { getScheduleForSection } from '../services/sheetsAPI';
 import { getCurrentDayCode } from '../utils/scheduleHelpers';
+import { getActivities } from '../utils/activityStorage';
+import { calculateActivityStatus } from '../utils/activityHelpers';
 import './Dashboard.css';
 
 function getTabNameFromSection(sectionCode) {
@@ -23,13 +25,14 @@ function getStoredSection() {
   }
 }
 
-const Dashboard = ({ accessToken, onLogout }) => {
+const Dashboard = ({ accessToken, userEmail, onLogout }) => {
   const [activeSection, setActiveSection] = useState(getStoredSection);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState(null);
   const [selectedDay, setSelectedDay] = useState(getCurrentDayCode());
+  const [activityStats, setActivityStats] = useState({ total: 0, completed: 0 });
 
   const handleSectionSubmit = (code) => {
     console.log('Loading data for:', code);
@@ -76,6 +79,32 @@ const Dashboard = ({ accessToken, onLogout }) => {
       .finally(() => setIsLoading(false));
   }, [activeSection, accessToken]);
 
+  // Recomputes the "Today's Classes" + "Completed" stat cards from the local
+  // activities cache. ActivityList calls this (via onActivitiesChange) any
+  // time it adds/toggles/deletes an activity, so the cards stay in sync.
+  const refreshActivityStats = useCallback(() => {
+    if (!userEmail || !activeSection) {
+      setActivityStats({ total: 0, completed: 0 });
+      return;
+    }
+    const stored = getActivities(userEmail, activeSection);
+    const total = stored.length;
+    const completed = stored.filter(
+      (a) => calculateActivityStatus(a.dueDate, a.dueTime, a.isCompleted) === 'Done'
+    ).length;
+    setActivityStats({ total, completed });
+  }, [userEmail, activeSection]);
+
+  useEffect(() => {
+    refreshActivityStats();
+  }, [refreshActivityStats]);
+
+  // NOTE: assumes each class object has a `day` field using the same codes
+  // returned by getCurrentDayCode() (e.g. 'THU') — same convention already
+  // used for filterDay/selectedDay above. Adjust the field name below if
+  // your schedule objects use a different key.
+  const todaysClassesCount = classes.filter((c) => c.day === getCurrentDayCode()).length;
+
   return (
     <div className="dashboard">
       <header className="dashboard__header">
@@ -114,28 +143,51 @@ const Dashboard = ({ accessToken, onLogout }) => {
             </button>
           </div>
         ) : (
-          <div className="dashboard__grid">
-            <div className="dashboard__slot-banner">
-              <AccordionBanner classes={classes} />
+          <>
+            <div className="dashboard__grid">
+              <div className="dashboard__slot-stats">
+                <div className="dashboard__stats">
+                  <div className="dashboard__stat-card">
+                    <span className="dashboard__stat-value">{todaysClassesCount}</span>
+                    <span className="dashboard__stat-label">Today's Classes</span>
+                  </div>
+                  <div className="dashboard__stat-card">
+                    <span className="dashboard__stat-value">
+                      {activityStats.completed}/{activityStats.total}
+                    </span>
+                    <span className="dashboard__stat-label">Activities Completed</span>
+                  </div>
+                </div>
+              </div>
+              <div className="dashboard__slot-list">
+                <ScheduleList
+                  classes={classes}
+                  filterDay={selectedDay}
+                  onFilterDayChange={setSelectedDay}
+                  userEmail={userEmail}
+                />
+              </div>
+              <div className="dashboard__slot-calendar">
+                <WeekCalendar
+                  classes={classes}
+                  selectedDay={selectedDay}
+                  onSelectDay={setSelectedDay}
+                />
+              </div>
+              <div className="dashboard__slot-week">
+                <WeekGlance classes={classes} />
+              </div>
             </div>
-            <div className="dashboard__slot-list">
-              <ScheduleList
+
+            <div className="dashboard__slot-activities">
+              <ActivityList
+                userEmail={userEmail}
+                sectionCode={activeSection}
                 classes={classes}
-                filterDay={selectedDay}
-                onFilterDayChange={setSelectedDay}
+                onActivitiesChange={refreshActivityStats}
               />
             </div>
-            <div className="dashboard__slot-calendar">
-              <WeekCalendar
-                classes={classes}
-                selectedDay={selectedDay}
-                onSelectDay={setSelectedDay}
-              />
-            </div>
-            <div className="dashboard__slot-week">
-              <WeekGlance classes={classes} />
-            </div>
-          </div>
+          </>
         )
       ) : (
         <div className="dashboard__empty">

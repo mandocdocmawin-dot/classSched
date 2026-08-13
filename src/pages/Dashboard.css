@@ -94,15 +94,11 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
-    'banner'
+    'stats'
     'list'
     'calendar'
     'week';
   gap: 0;
-}
-
-.dashboard__slot-banner {
-  grid-area: banner;
 }
 
 .dashboard__slot-calendar {
@@ -117,11 +113,48 @@
   grid-area: week;
 }
 
+.dashboard__slot-stats {
+  grid-area: stats;
+  margin-bottom: 16px;
+}
+
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.dashboard__stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard__stat-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dashboard__stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
 @media (min-width: 900px) {
   .dashboard__grid {
     grid-template-columns: 1fr 340px;
     grid-template-areas:
-      'list banner'
+      'list stats'
       'list calendar'
       'list week';
     align-items: start;
@@ -131,6 +164,12 @@
   .dashboard__slot-list {
     margin-top: 0;
   }
+}
+
+/* Full-width section below the schedule grid, like "My Tasks" under the
+   Weekly Schedule + calendar block in the reference layout. */
+.dashboard__slot-activities {
+  margin-top: 28px;
 }
 
 .dashboard__empty {

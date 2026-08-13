@@ -1,11 +1,35 @@
 import React, { useState, useMemo } from 'react';
 import InfoCard from './InfoCard';
+import AccordionBanner from '../SmartStatus/AccordionBanner';
 import { getShortDay, formatTimeRange, getClassStatus, getCurrentDayCode } from '../../utils/scheduleHelpers';
 import './ScheduleList.css';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
-const ScheduleList = ({ classes = [], filterDay: controlledFilterDay, onFilterDayChange }) => {
+function getFirstName(email) {
+  if (!email) return 'there';
+  const localPart = email.split('@')[0];
+  const firstToken = localPart.split(/[._-]+/)[0] || localPart;
+  return firstToken.charAt(0).toUpperCase() + firstToken.slice(1).toLowerCase();
+}
+
+function getGreetingWord(date = new Date()) {
+  const hour = date.getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+// "Thursday, August 13" — no clock time, just the day + date.
+function getTodayLabel(date = new Date()) {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+const ScheduleList = ({ classes = [], filterDay: controlledFilterDay, onFilterDayChange, userEmail }) => {
   const [internalFilterDay, setInternalFilterDay] = useState(getCurrentDayCode());
   const filterDay = controlledFilterDay ?? internalFilterDay;
 
@@ -36,6 +60,8 @@ const ScheduleList = ({ classes = [], filterDay: controlledFilterDay, onFilterDa
     [classes, filterDay]
   );
 
+  const firstName = getFirstName(userEmail);
+
   return (
     <div className="schedule-list">
       <div className="schedule-list__header">
@@ -60,6 +86,17 @@ const ScheduleList = ({ classes = [], filterDay: controlledFilterDay, onFilterDa
           </select>
         </label>
       </div>
+
+      <div className="schedule-list__greeting">
+        <span className="schedule-list__greeting-date mono-num">
+          TODAY &middot; {getTodayLabel()}
+        </span>
+        <p className="schedule-list__greeting-title">
+          {getGreetingWord()}, {firstName}!
+        </p>
+      </div>
+
+      <AccordionBanner classes={classes} />
 
       {filteredClasses.length > 0 ? (
         filteredClasses.map((cls) => <InfoCard key={cls.id} {...cls} />)

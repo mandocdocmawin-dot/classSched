@@ -71,3 +71,21 @@
   padding: 24px 0;
 }
 
+.schedule-list__greeting {
+  margin-bottom: var(--gap);
+}
+
+.schedule-list__greeting-date {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.schedule-list__greeting-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text);
+}
