@@ -1,5 +1,5 @@
 // src/components/Activities/ActivityForm.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import './ActivityForm.css';
 import { addActivity, updateActivity } from '../../utils/activityStorage';
 
@@ -28,11 +28,6 @@ const ActivityForm = ({ userEmail, sectionCode, classes = [], initialActivity = 
       : EMPTY_FORM
   );
 
-  // Subject choices come straight from the section's own Google Sheets
-  // schedule (the `course` field parsed in sheetsAPI.js), so the dropdown
-  // only ever shows subjects the student is actually enrolled in.
-  // Some rows in the sheet aren't real subjects (e.g. "Dedicated Time For",
-  // "Student Activity Program", "Weekly Clean-Up") — those are filtered out.
   const EXCLUDED_SUBJECT_PATTERNS = [
     /dedicated time for/i,
     /student activity program/i,
@@ -58,25 +53,44 @@ const ActivityForm = ({ userEmail, sectionCode, classes = [], initialActivity = 
     e.preventDefault();
 
     if (isEditing) {
-      // I-update ang existing activity (hindi na gagawa ng bago)
       await updateActivity(userEmail, sectionCode, initialActivity.id, formData);
     } else {
-      // I-save ang bagong activity gamit ang storage helper
       await addActivity(userEmail, sectionCode, formData);
       setFormData(EMPTY_FORM);
     }
 
-    // I-trigger ang callback para mag-refresh ang listahan
     if (onActivityAdded) onActivityAdded();
   };
 
+  const formRef = useRef(null);
+
+  // Pressing Enter in ANY field (including the notes textarea) tries to
+  // save the activity. requestSubmit() runs the browser's normal form
+  // validation first, so if a required field (Title, Subject, Due Date,
+  // Due Time) is still empty, the browser highlights it and shows its
+  // "please fill out this field" message instead of doing nothing.
+  const handleFormKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      formRef.current?.requestSubmit();
+    }
+  };
+
   return (
-    <form className="activity-form" onSubmit={handleSubmit}>
+    <form ref={formRef} className="activity-form" onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
       <h4>{isEditing ? 'Edit Activity' : 'Add New Activity'}</h4>
 
       <div className="form-group">
         <label>Title</label>
-        <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+        <input
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          maxLength={100}
+          required
+        />
+        <span className="form-charcount">{formData.title.length}/100</span>
       </div>
 
       <div className="form-group">
@@ -90,9 +104,16 @@ const ActivityForm = ({ userEmail, sectionCode, classes = [], initialActivity = 
       </div>
 
       <div className="form-group">
-        <label>Subject</label>
-        <select name="relatedSubject" value={formData.relatedSubject} onChange={handleChange}>
-          <option value="">— None / Not linked to a class —</option>
+        <label>Subject *</label>
+        <select
+          name="relatedSubject"
+          value={formData.relatedSubject}
+          onChange={handleChange}
+          required
+        >
+          <option value="" disabled>
+            Select a subject
+          </option>
           {subjectOptions.map((subject) => (
             <option key={subject} value={subject}>
               {subject}
@@ -118,7 +139,16 @@ const ActivityForm = ({ userEmail, sectionCode, classes = [], initialActivity = 
 
       <div className="form-group">
         <label>Notes</label>
-        <textarea name="notes" value={formData.notes} onChange={handleChange} rows={3} />
+        <textarea
+          name="notes"
+          className="notes-textarea"
+          value={formData.notes}
+          onChange={handleChange}
+          rows={8}
+          maxLength={500}
+          enterKeyHint="enter"
+        />
+        <span className="form-charcount">{formData.notes.length}/500</span>
       </div>
 
       <button type="submit" className="btn-submit">

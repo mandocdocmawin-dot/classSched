@@ -48,8 +48,41 @@
   resize: vertical;
 }
 
+.notes-textarea {
+  min-height: 160px;
+  line-height: 1.5;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) var(--panel);
+}
+
+.notes-textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notes-textarea::-webkit-scrollbar-track {
+  background: var(--panel);
+  border-radius: var(--radius-sm);
+}
+
+.notes-textarea::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: var(--radius-sm);
+}
+
+.notes-textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--amber);
+}
+
 .form-hint {
   font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.form-charcount {
+  align-self: flex-end;
+  font-size: 0.72rem;
   color: var(--text-dim);
 }
 
