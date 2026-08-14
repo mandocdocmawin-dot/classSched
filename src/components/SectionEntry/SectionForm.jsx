@@ -1,33 +1,28 @@
 import React, { useState } from 'react';
-import { getSectionByAccessCode } from '../../config/sectionAccessCodes';
+import { PROGRAM_TABS, YEAR_LEVELS, buildSectionCode } from '../../config/sectionPrograms';
 import './SectionForm.css';
 
 const SectionForm = ({ isOpen, onClose, onSubmitSection, error }) => {
-  const [accessCode, setAccessCode] = useState('');
+  const [program, setProgram] = useState('');
+  const [yearLevel, setYearLevel] = useState('');
   const [localError, setLocalError] = useState('');
 
   if (!isOpen) return null;
 
-  const handleAccessCodeChange = (e) => {
-    const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 6);
-    setAccessCode(digitsOnly);
-    setLocalError('');
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (accessCode.length !== 6) {
-      setLocalError('Kailangan 6 digits ang access code.');
+    if (!program || !yearLevel) {
+      setLocalError('Piliin ang program at year level.');
       return;
     }
 
-    const matchedSection = getSectionByAccessCode(accessCode);
-    if (!matchedSection) {
-      setLocalError('Hindi valid ang access code na ito.');
+    const sectionCode = buildSectionCode(program, yearLevel);
+    if (!sectionCode) {
+      setLocalError('Hindi valid ang napiling program/year level.');
       return;
     }
-    onSubmitSection(matchedSection);
+    onSubmitSection(sectionCode);
   };
 
   const displayError = localError || error;
@@ -44,19 +39,48 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error }) => {
 
         <form onSubmit={handleSubmit}>
           <label className="section-modal__code-field">
-            <span className="section-modal__field-label mono-num">ACCESS CODE</span>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="\d{6}"
-              maxLength={6}
-              className="section-modal__code-input section-modal__code-input--access mono-num"
-              value={accessCode}
-              onChange={handleAccessCodeChange}
-              placeholder="6-digit code"
+            <span className="section-modal__field-label mono-num">PROGRAM</span>
+            <select
+              className="section-modal__code-input section-modal__select mono-num"
+              value={program}
+              onChange={(e) => {
+                setProgram(e.target.value);
+                setLocalError('');
+              }}
               autoFocus
               required
-            />
+            >
+              <option value="" disabled>
+                Select program
+              </option>
+              {PROGRAM_TABS.map((tab) => (
+                <option key={tab} value={tab}>
+                  {tab}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="section-modal__code-field">
+            <span className="section-modal__field-label mono-num">YEAR LEVEL</span>
+            <select
+              className="section-modal__code-input section-modal__select mono-num"
+              value={yearLevel}
+              onChange={(e) => {
+                setYearLevel(e.target.value);
+                setLocalError('');
+              }}
+              required
+            >
+              <option value="" disabled>
+                Select year level
+              </option>
+              {YEAR_LEVELS.map((y) => (
+                <option key={y.value} value={y.value}>
+                  {y.label}
+                </option>
+              ))}
+            </select>
           </label>
 
           {displayError && <p className="section-modal__error">{displayError}</p>}

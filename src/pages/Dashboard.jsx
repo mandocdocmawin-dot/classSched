@@ -113,7 +113,7 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
           </p>
         </div>
         <button className="dashboard__add-btn" onClick={() => setIsModalOpen(true)}>
-          <span aria-hidden="true">+</span> {activeSection ? 'Add New' : 'Set Section'}
+          <span aria-hidden="true">✎</span> {activeSection ? 'Switch Program' : 'Set Section'}
         </button>
       </header>
 
