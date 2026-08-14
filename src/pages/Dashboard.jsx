@@ -80,9 +80,6 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
       .finally(() => setIsLoading(false));
   }, [activeSection, accessToken]);
 
-  // Recomputes the "Today's Classes" + "Completed" stat cards from the local
-  // activities cache. ActivityList calls this (via onActivitiesChange) any
-  // time it adds/toggles/deletes an activity, so the cards stay in sync.
   const refreshActivityStats = useCallback(() => {
     if (!userEmail || !activeSection) {
       setActivityStats({ total: 0, completed: 0 });
@@ -102,10 +99,6 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
     refreshActivityStats();
   }, [refreshActivityStats]);
 
-  // NOTE: assumes each class object has a `day` field using the same codes
-  // returned by getCurrentDayCode() (e.g. 'THU') — same convention already
-  // used for filterDay/selectedDay above. Adjust the field name below if
-  // your schedule objects use a different key.
   const todaysClassesCount = classes.filter((c) => c.day === getCurrentDayCode()).length;
 
   return (

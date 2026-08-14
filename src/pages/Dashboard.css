@@ -89,20 +89,20 @@
   box-shadow: none;
 }
 
-/* Mobile reading order: Banner -> Today's List -> Week Calendar -> Week Glance */
 .dashboard__grid {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
     'stats'
+    'week'
     'list'
-    'calendar'
-    'week';
-  gap: 0;
+    'calendar';
+  gap: 20px;
 }
 
 .dashboard__slot-calendar {
   grid-area: calendar;
+  margin-top: 20px;
 }
 
 .dashboard__slot-list {
@@ -115,7 +115,6 @@
 
 .dashboard__slot-stats {
   grid-area: stats;
-  margin-bottom: 16px;
 }
 
 .dashboard__stats {
@@ -164,10 +163,12 @@
   .dashboard__slot-list {
     margin-top: 0;
   }
+
+  .dashboard__slot-calendar {
+    margin-top: 0;
+  }
 }
 
-/* Full-width section below the schedule grid, like "My Tasks" under the
-   Weekly Schedule + calendar block in the reference layout. */
 .dashboard__slot-activities {
   margin-top: 28px;
 }
