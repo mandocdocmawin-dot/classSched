@@ -26,7 +26,7 @@ const Login = ({ onLoginSuccess }) => {
         <GoogleLogin onLogin={onLoginSuccess} />
       </div>
 
-      <p className="login__footer mono-num">SCHOOL WI-FI RECOMMENDED · v1.1</p>
+      <p className="login__footer mono-num">SCHOOL RECOMMENDED · v1.1</p>
     </div>
   );
 };
