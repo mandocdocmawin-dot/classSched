@@ -31,7 +31,7 @@ const SectionForm = ({ isOpen, onClose, onSubmitSection, error }) => {
     <div className="section-modal__overlay" onClick={onClose}>
       <div className="section-modal" onClick={(e) => e.stopPropagation()}>
         <div className="section-modal__header">
-          <span className="section-modal__label mono-num">SET YOUR SECTION</span>
+          <span className="section-modal__label mono-num">SET YOUR COURSE</span>
           <button className="section-modal__close" onClick={onClose} aria-label="Close">
             ✕
           </button>
