@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { getDaysWithClasses } from '../../utils/scheduleHelpers';
 import { fetchPHHolidays } from '../../services/holidaysAPI';
+import { calculateActivityStatus } from '../../utils/activityHelpers';
 import ClassDayModal from './ClassDayModal';
 import './WeekCalendar.css';
 
@@ -19,6 +20,14 @@ function getWeekdayCode(date) {
 
 function toDateKey(year, month, day) {
   return `${year}-${month}-${day}`;
+}
+
+// Converts an activity's `dueDate` (stored as 'YYYY-MM-DD') into the same
+// dateKey shape produced by toDateKey() above, so it can be matched against
+// calendar grid cells (cell.dateKey).
+function dueDateToDateKey(dueDate) {
+  const [year, month, day] = dueDate.split('-').map(Number);
+  return toDateKey(year, month - 1, day);
 }
 
 
@@ -50,9 +59,26 @@ function buildMonthGrid(year, month) {
   }
   return weeks;
 }
-const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
+const WeekCalendar = ({ classes = [], activities = [], selectedDay, onSelectDay }) => {
   const today = new Date();
   const daysWithClasses = getDaysWithClasses(classes);
+
+  // Group non-done activities by the date they're due, so the grid can flag
+  // days that have something pending and the modal can list them. Activities
+  // marked Done are excluded on purpose — once checked off, they disappear
+  // from the calendar.
+  const activitiesByDateKey = useMemo(() => {
+    const map = {};
+    activities.forEach((activity) => {
+      if (!activity.dueDate) return;
+      const status = calculateActivityStatus(activity.dueDate, activity.dueTime, activity.isCompleted);
+      if (status === 'Done') return;
+      const key = dueDateToDateKey(activity.dueDate);
+      if (!map[key]) map[key] = [];
+      map[key].push(activity);
+    });
+    return map;
+  }, [activities]);
 
   const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDateKey, setSelectedDateKey] = useState(
@@ -143,6 +169,7 @@ const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
 
               const holiday = holidaysByDate[cell.dateKey];
               const hasClasses = daysWithClasses.includes(cell.code);
+              const hasActivities = Boolean(activitiesByDateKey[cell.dateKey]);
               const isToday = cell.dateKey === todayKey;
               const isSelected = cell.dateKey === selectedDateKey;
 
@@ -155,7 +182,7 @@ const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
                     isSelected && 'week-calendar__day--selected',
                     isToday && 'week-calendar__day--today',
                     holiday && 'week-calendar__day--holiday',
-                    !hasClasses && !holiday && 'week-calendar__day--empty',
+                    !hasClasses && !hasActivities && !holiday && 'week-calendar__day--empty',
                   ]
                     .filter(Boolean)
                     .join(' ')}
@@ -164,16 +191,20 @@ const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
                   title={holiday ? holiday.name : undefined}
                 >
                   <span className="week-calendar__day-date mono-num">{cell.day}</span>
-                  <span
-                    className={[
-                      'week-calendar__day-dot',
-                      holiday && 'week-calendar__day-dot--holiday',
-                      !holiday && hasClasses && 'week-calendar__day-dot--active',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                    aria-hidden="true"
-                  />
+                  <span className="week-calendar__day-dots" aria-hidden="true">
+                    {holiday ? (
+                      <span className="week-calendar__day-dot week-calendar__day-dot--holiday" />
+                    ) : (
+                      <>
+                        <span
+                          className={`week-calendar__day-dot${hasClasses ? ' week-calendar__day-dot--active' : ''}`}
+                        />
+                        {hasActivities && (
+                          <span className="week-calendar__day-dot week-calendar__day-dot--task" />
+                        )}
+                      </>
+                    )}
+                  </span>
                 </button>
               );
             })}
@@ -194,6 +225,10 @@ const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
           <span className="week-calendar__legend-dot week-calendar__legend-dot--holiday" aria-hidden="true" />
           No class (holiday)
         </span>
+        <span className="week-calendar__legend-item">
+          <span className="week-calendar__legend-dot week-calendar__legend-dot--task" aria-hidden="true" />
+          Activity due
+        </span>
       </div>
 
       <ClassDayModal
@@ -203,6 +238,7 @@ const WeekCalendar = ({ classes = [], selectedDay, onSelectDay }) => {
         dayCode={modalCell?.code}
         holiday={activeHoliday}
         classes={classes}
+        activities={modalCell ? activitiesByDateKey[modalCell.dateKey] || [] : []}
       />
     </div>
   );

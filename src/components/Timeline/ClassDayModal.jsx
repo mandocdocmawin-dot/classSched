@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatTimeRange, getShortDay } from '../../utils/scheduleHelpers';
+import { calculateActivityStatus } from '../../utils/activityHelpers';
 import './ClassDayModal.css';
 
 const MONTH_NAMES = [
@@ -7,7 +8,7 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }) => {
+const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [], activities = [] }) => {
   if (!isOpen || !date) return null;
 
   const dayClasses = classes
@@ -23,7 +24,25 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
     }))
     .sort((a, b) => a._sortKey.localeCompare(b._sortKey));
 
+  // `activities` here only contains activities due on this date that are
+  // NOT marked Done — WeekCalendar filters that out before passing them in,
+  // which is also why a checked-off activity disappears from the calendar.
+  const dayActivities = activities
+    .map((activity) => ({
+      ...activity,
+      status: calculateActivityStatus(activity.dueDate, activity.dueTime, activity.isCompleted),
+    }))
+    .sort((a, b) => (a.dueTime || '').localeCompare(b.dueTime || ''));
+
   const formattedDate = `${MONTH_NAMES[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+
+  const title = holiday
+    ? holiday.name
+    : dayClasses.length > 0
+    ? 'Your Classes'
+    : dayActivities.length > 0
+    ? 'Your Activities'
+    : 'No Class';
 
   return (
     <div className="day-modal__overlay" onClick={onClose}>
@@ -36,9 +55,7 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
         <div className="day-modal__header">
           <div>
             <span className="day-modal__date mono-num">{formattedDate}</span>
-            <h3 className="day-modal__title">
-              {holiday ? holiday.name : dayClasses.length > 0 ? 'Your Classes' : 'No Class'}
-            </h3>
+            <h3 className="day-modal__title">{title}</h3>
           </div>
           <button className="day-modal__close" onClick={onClose} aria-label="Close">
             ✕
@@ -58,28 +75,66 @@ const ClassDayModal = ({ isOpen, onClose, date, dayCode, holiday, classes = [] }
                 <p className="day-modal__holiday-sub">{holiday.description}</p>
               )}
             </div>
-          ) : dayClasses.length > 0 ? (
-            <div className="day-modal__list">
-              {dayClasses.map((cls) => (
-                <div
-                  key={cls.id}
-                  className={`day-modal__class day-modal__class--${cls.isOnline ? 'online' : 'f2f'}`}
-                >
-                  <div className="day-modal__class-top">
-                    <h4 className="day-modal__class-title">{cls.title}</h4>
-                    <span className="day-modal__class-time mono-num">{cls.time}</span>
-                  </div>
-                  <div className="day-modal__class-meta">
-                    <span>{cls.instructor}</span>
-                    <span className="day-modal__class-gate mono-num">
-                      {cls.isOnline ? 'Online / Async' : cls.location}
-                    </span>
+          ) : (
+            <>
+              {dayClasses.length > 0 && (
+                <div className="day-modal__list">
+                  {dayClasses.map((cls) => (
+                    <div
+                      key={cls.id}
+                      className={`day-modal__class day-modal__class--${cls.isOnline ? 'online' : 'f2f'}`}
+                    >
+                      <div className="day-modal__class-top">
+                        <h4 className="day-modal__class-title">{cls.title}</h4>
+                        <span className="day-modal__class-time mono-num">{cls.time}</span>
+                      </div>
+                      <div className="day-modal__class-meta">
+                        <span>{cls.instructor}</span>
+                        <span className="day-modal__class-gate mono-num">
+                          {cls.isOnline ? 'Online / Async' : cls.location}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {dayActivities.length > 0 && (
+                <div className="day-modal__section">
+                  {dayClasses.length > 0 && (
+                    <h4 className="day-modal__section-title">Activities Due</h4>
+                  )}
+                  <div className="day-modal__list">
+                    {dayActivities.map((activity) => (
+                      <div
+                        key={activity.id}
+                        className={`day-modal__activity day-modal__activity--${activity.status.toLowerCase()}`}
+                      >
+                        <div className="day-modal__class-top">
+                          <h4 className="day-modal__class-title">{activity.title}</h4>
+                          <span
+                            className={`day-modal__activity-badge day-modal__activity-badge--${activity.status.toLowerCase()}`}
+                          >
+                            {activity.status}
+                          </span>
+                        </div>
+                        <div className="day-modal__class-meta">
+                          <span>
+                            {activity.type}
+                            {activity.relatedSubject ? ` · ${activity.relatedSubject}` : ''}
+                          </span>
+                          <span className="day-modal__class-gate mono-num">{activity.dueTime}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="day-modal__empty">No classes scheduled for this day.</p>
+              )}
+
+              {dayClasses.length === 0 && dayActivities.length === 0 && (
+                <p className="day-modal__empty">No classes or activities for this day.</p>
+              )}
+            </>
           )}
         </div>
       </div>

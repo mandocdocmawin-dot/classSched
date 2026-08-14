@@ -168,4 +168,74 @@
   color: var(--text-muted);
   font-size: 13px;
   padding: 24px 0;
-}
+}
+
+.day-modal__section {
+  margin-top: 16px;
+}
+
+.day-modal__section-title {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.day-modal__activity {
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  box-shadow: inset 3px 0 0 var(--text-dim);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.day-modal__activity:hover {
+  border-color: var(--border-hover);
+  background: var(--panel-hover);
+}
+
+.day-modal__activity--overdue {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+
+.day-modal__activity--ongoing {
+  box-shadow: inset 3px 0 0 var(--amber);
+}
+
+.day-modal__activity--pending {
+  box-shadow: inset 3px 0 0 var(--text-dim);
+}
+
+.day-modal__activity-badge {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+
+.day-modal__activity-badge--overdue {
+  color: var(--danger);
+  background: var(--danger-glow);
+  border-color: var(--danger-dim);
+}
+
+.day-modal__activity-badge--ongoing {
+  color: var(--amber);
+  background: var(--amber-glow);
+  border-color: var(--amber-dim);
+}
+
+.day-modal__activity-badge--pending {
+  color: var(--text-muted);
+  background: var(--panel);
+  border-color: var(--border);
+}

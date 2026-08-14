@@ -144,6 +144,12 @@
   color: var(--text);
 }
 
+.week-calendar__day-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .week-calendar__day-dot {
   width: 4px;
   height: 4px;
@@ -157,6 +163,10 @@
 
 .week-calendar__day-dot--holiday {
   background: var(--holiday-accent);
+}
+
+.week-calendar__day-dot--task {
+  background: var(--teal);
 }
 
 .week-calendar__legend {
@@ -189,4 +199,8 @@
 
 .week-calendar__legend-dot--holiday {
   background: var(--holiday-accent);
+}
+
+.week-calendar__legend-dot--task {
+  background: var(--teal);
 }

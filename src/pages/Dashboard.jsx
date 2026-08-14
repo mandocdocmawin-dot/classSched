@@ -33,6 +33,7 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
   const [loadError, setLoadError] = useState(null);
   const [selectedDay, setSelectedDay] = useState(getCurrentDayCode());
   const [activityStats, setActivityStats] = useState({ total: 0, completed: 0 });
+  const [activities, setActivities] = useState([]);
 
   const handleSectionSubmit = (code) => {
     console.log('Loading data for:', code);
@@ -85,6 +86,7 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
   const refreshActivityStats = useCallback(() => {
     if (!userEmail || !activeSection) {
       setActivityStats({ total: 0, completed: 0 });
+      setActivities([]);
       return;
     }
     const stored = getActivities(userEmail, activeSection);
@@ -93,6 +95,7 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
       (a) => calculateActivityStatus(a.dueDate, a.dueTime, a.isCompleted) === 'Done'
     ).length;
     setActivityStats({ total, completed });
+    setActivities(stored);
   }, [userEmail, activeSection]);
 
   useEffect(() => {
@@ -170,6 +173,7 @@ const Dashboard = ({ accessToken, userEmail, onLogout }) => {
               <div className="dashboard__slot-calendar">
                 <WeekCalendar
                   classes={classes}
+                  activities={activities}
                   selectedDay={selectedDay}
                   onSelectDay={setSelectedDay}
                 />
