@@ -4,10 +4,42 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>classsched</title>
+
+    <title>Smart Class Scheduling System</title>
+
+    <meta
+      name="description"
+      content="Smart Class Scheduling System is a class schedule and activity tracker for La Verdad students. Sign in with your student.laverdad.edu.ph Google account to view your section's weekly schedule and track assignments."
+    />
+
+    <meta property="og:title" content="Smart Class Scheduling System" />
+    <meta
+      property="og:description"
+      content="Class schedule and activity tracker for La Verdad students."
+    />
   </head>
   <body>
     <div id="root"></div>
+
+    <noscript>
+      <div style="font-family: sans-serif; padding: 40px; max-width: 600px; margin: 0 auto;">
+        <h1>Smart Class Scheduling System</h1>
+        <p>
+          A class schedule and activity tracker built for La Verdad students.
+          Sign in with your <code>student.laverdad.edu.ph</code> Google
+          account to view your section's weekly schedule, pulled from your
+          program's official Google Sheet, and track your own assignments and
+          deadlines alongside it. Read-only — this app never edits your
+          section's Sheet, and no data is stored on our servers.
+        </p>
+        <p>
+          This page requires JavaScript to sign in.
+          <a href="/privacy.html">Privacy Policy</a> ·
+          <a href="/terms.html">Terms of Service</a>
+        </p>
+      </div>
+    </noscript>
+
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
