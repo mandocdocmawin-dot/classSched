@@ -4,23 +4,27 @@ import Dashboard from './pages/Dashboard';
 import { initGoogleAuth, signIn, verifyEduAndFetchSheet, saveSession, getSession, clearSession } from './services/googleAuth';
 import './App.css';
 
-async function fetchUserEmail(accessToken) {
+async function fetchUserInfo(accessToken) {
   try {
     const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (!res.ok) throw new Error('Failed to fetch user info');
     const data = await res.json();
-    return data.email || null;
+    return {
+      email: data.email || null,
+      name: data.given_name || data.name || null,
+    };
   } catch (e) {
-    console.error('Failed to fetch user email:', e);
-    return null;
+    console.error('Failed to fetch user info:', e);
+    return { email: null, name: null };
   }
 }
 
 function App() {
   const [accessToken, setAccessToken] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [authError, setAuthError] = useState(false);
 
   useEffect(() => {
@@ -28,12 +32,16 @@ function App() {
     if (session) {
       setAccessToken(session.accessToken);
       verifyEduAndFetchSheet(session.accessToken)
-        .then(() => fetchUserEmail(session.accessToken))
-        .then(setUserEmail)
+        .then(() => fetchUserInfo(session.accessToken))
+        .then(({ email, name }) => {
+          setUserEmail(email);
+          setUserName(name);
+        })
         .catch(() => {
           clearSession();
           setAccessToken(null);
           setUserEmail(null);
+          setUserName(null);
           setAuthError(true);
         });
     }
@@ -41,10 +49,11 @@ function App() {
     initGoogleAuth(async (token, expiresIn) => {
       try {
         await verifyEduAndFetchSheet(token);
-        const email = await fetchUserEmail(token);
+        const { email, name } = await fetchUserInfo(token);
         saveSession(token, expiresIn);
         setAccessToken(token);
         setUserEmail(email);
+        setUserName(name);
         setAuthError(false);
       } catch (e) {
         setAuthError(true);
@@ -56,12 +65,18 @@ function App() {
     clearSession();
     setAccessToken(null);
     setUserEmail(null);
+    setUserName(null);
   };
 
   return (
     <div className="App">
       {accessToken ? (
-        <Dashboard accessToken={accessToken} userEmail={userEmail} onLogout={handleLogout} />
+        <Dashboard
+          accessToken={accessToken}
+          userEmail={userEmail}
+          userName={userName}
+          onLogout={handleLogout}
+        />
       ) : (
         <Login onLoginSuccess={signIn} />
       )}

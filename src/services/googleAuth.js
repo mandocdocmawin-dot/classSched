@@ -53,8 +53,11 @@ export function initGoogleAuth(onTokenReceived) {
 
   tokenClient = window.google.accounts.oauth2.initTokenClient({
     client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    scope: "https://www.googleapis.com/auth/spreadsheets.readonly",
-    hosted_domain: "student.laverdad.edu.ph",
+    scope:
+      "https://www.googleapis.com/auth/spreadsheets.readonly " +
+      "https://www.googleapis.com/auth/userinfo.email " +
+      "https://www.googleapis.com/auth/userinfo.profile",
+    hosted_domain: "laverdad.edu.ph",
     callback: (tokenResponse) => {
       if (tokenResponse.error) {
         console.error("Auth error:", tokenResponse);
